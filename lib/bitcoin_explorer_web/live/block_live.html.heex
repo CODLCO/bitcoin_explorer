@@ -1,0 +1,11 @@
+<h2>Block height <%= @height %></h2>
+
+<ul>
+  <li>v<%= @block.header.version %></li>
+  <li>previous block hash <%= inspect @block.header.previous_block_hash %></li>
+  <li>merkle root hash <%= inspect @block.header.merkle_root_hash %></li>
+  <li>time <%= @block.header.time %></li>
+  <li>bits <%= @block.header.bits %></li>
+  <li>nonce <%= @block.header.nonce %></li>
+  <li>contains <%= Enum.count(@block.transactions) %> transactions</li>
+</ul>
