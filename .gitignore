@@ -36,4 +36,6 @@ npm-debug.log
 *.db
 *.db-*
 
-bitcoin_explorer_*.db
+bitcoin_explorer_*.db*
+
+.DS_Store
