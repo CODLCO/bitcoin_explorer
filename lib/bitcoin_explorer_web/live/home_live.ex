@@ -5,8 +5,8 @@ defmodule BitcoinExplorerWeb.HomeLive do
 
   alias BitcoinExplorer.Block
 
-  @start 30000
-  @size 10000
+  @start 139757
+  @size 11000
 
   @impl true
   def mount(_params, _session, socket) do
@@ -17,21 +17,27 @@ defmodule BitcoinExplorerWeb.HomeLive do
     {:ok,
      socket
      |> assign(:height, initial_height)
-     |> assign(:previous_block_hash, "")}
+     |> assign(:time, "")}
   end
 
+  @impl true
   def handle_info({:get_block, height}, socket) when height > @start + @size do
     {:noreply, socket}
   end
 
   def handle_info({:get_block, height}, socket) do
-    block = Block.get_by_height(height)
+    case Block.get_by_height(height) do
+      {:ok, block} ->
+        send(self(), {:get_block, height + 1})
 
-    send(self(), {:get_block, height + 1})
+        {:noreply,
+         socket
+         |> assign(:height, height)
+         |> assign(:time, DateTime.to_string(block.header.time))}
 
-    {:noreply,
-     socket
-     |> assign(:height, height)
-     |> assign(:previous_block_hash, inspect(block.header.previous_block_hash))}
+      {:error, message} ->
+        IO.puts(message)
+        {:noreply, socket}
+    end
   end
 end

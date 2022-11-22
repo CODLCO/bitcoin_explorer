@@ -6,7 +6,7 @@ defmodule BitcoinExplorerWeb.BlockLive do
   @impl true
   def mount(%{"height" => height_string}, _session, socket) do
     {height, _remainder} = Integer.parse(height_string)
-    block = Block.get_by_height(height)
+    {:ok, block} = Block.get_by_height(height)
 
     {
       :ok,

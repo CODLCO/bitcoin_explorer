@@ -50,7 +50,8 @@ defmodule BitcoinExplorer.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:bitcoin_core_client, "~> 0.1.0"},
-      {:bitcoinlib, "~> 0.4.1"}
+      # {:bitcoinlib, "~> 0.4.1"}
+      {:bitcoinlib, path: "../bitcoinlib"}
     ]
   end
 
