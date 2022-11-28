@@ -9,11 +9,15 @@ defmodule BitcoinExplorer.Application do
 
   @impl true
   def start(_type, _args) do
+    %{ip: ip, port: port, username: username, password: password} =
+      Application.get_env(:bitcoin_explorer, :bitcoin_core)
+      |> Enum.into(%{})
+
     bitcoin_core_rpc_settings = %Rpc.Settings{
-      username: "electrum",
-      password: "Rh_KUrE42MtGtUqhtjc",
-      ip: "electrum",
-      port: 8332
+      ip: ip,
+      port: port,
+      username: username,
+      password: password
     }
 
     children = [

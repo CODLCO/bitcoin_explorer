@@ -10,6 +10,12 @@ import Config
 config :bitcoin_explorer,
   ecto_repos: [BitcoinExplorer.Repo]
 
+config :bitcoin_explorer, :bitcoin_core,
+  ip: "127.0.0.1",
+  port: 8332,
+  username: "username",
+  password: "password"
+
 # Configures the endpoint
 config :bitcoin_explorer, BitcoinExplorerWeb.Endpoint,
   url: [host: "localhost"],
