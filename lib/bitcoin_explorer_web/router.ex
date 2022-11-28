@@ -18,6 +18,7 @@ defmodule BitcoinExplorerWeb.Router do
     pipe_through :browser
 
     live "/", HomeLive, :index
+    live "/iterate", IterateLive, :index
     live "/block/:height", BlockLive, :index
   end
 
