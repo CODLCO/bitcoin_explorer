@@ -39,3 +39,5 @@ npm-debug.log
 bitcoin_explorer_*.db*
 
 .DS_Store
+
+config/local
