@@ -1,0 +1,1 @@
+alias BitcoinExplorer.Transaction
