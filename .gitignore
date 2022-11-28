@@ -36,8 +36,7 @@ npm-debug.log
 *.db
 *.db-*
 
-bitcoin_explorer_*.db*
-
 .DS_Store
 
 config/local
+priv/data

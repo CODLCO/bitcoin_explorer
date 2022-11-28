@@ -2,7 +2,7 @@ import Config
 
 # Configure your database
 config :bitcoin_explorer, BitcoinExplorer.Repo,
-  database: Path.expand("../bitcoin_explorer_dev.db", Path.dirname(__ENV__.file)),
+  database: Path.expand("../priv/data/bitcoin_explorer_dev.db", Path.dirname(__ENV__.file)),
   pool_size: 5,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true
