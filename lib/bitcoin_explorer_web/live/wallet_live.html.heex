@@ -1,0 +1,29 @@
+THE WALLET GOES HERE
+
+<p>receive</p>
+
+<ul>
+<%= for entry <- @book_entries.receive do %>
+  <li>
+    <%= entry.address %>
+    <%= for transaction <- entry.history do %>
+      <%= inspect transaction.credits %>
+      <%= inspect transaction.debits %>
+    <% end %>
+  </li>
+<% end %>
+</ul>
+
+<p>change</p>
+
+<ul>
+<%= for entry <- @book_entries.change do %>
+  <li>
+    <%= entry.address %>
+    <%= for transaction <- entry.history do %>
+      <%= inspect transaction.credits %>
+      <%= inspect transaction.debits %>
+    <% end %>
+  </li>
+<% end %>
+</ul>
