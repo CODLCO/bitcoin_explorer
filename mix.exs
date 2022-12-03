@@ -33,6 +33,7 @@ defmodule BitcoinExplorer.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:hammox, "~> 0.7", only: :test},
       {:phoenix, "~> 1.6.15"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
@@ -49,9 +50,11 @@ defmodule BitcoinExplorer.MixProject do
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:bitcoin_core_client, "~> 0.1.0"},
+      {:bitcoin_core_client, path: "../bitcoin_core_client"},
       # {:bitcoinlib, "~> 0.4.1"}
-      {:bitcoinlib, path: "../bitcoinlib"}
+      {:number, "~> 1.0.3"},
+      {:bitcoin_accounting, "~> 0.1.22"},
+      {:bitcoinlib, path: "../bitcoinlib", override: true}
     ]
   end
 

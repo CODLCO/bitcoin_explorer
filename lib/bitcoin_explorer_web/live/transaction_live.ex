@@ -15,13 +15,16 @@ defmodule BitcoinExplorerWeb.TransactionLive do
         |> assign(:inputs, get_prevouts(transaction))
         |> assign(:total_output_sats, total_output_sats(transaction))
         |> assign(:format_sats, &format_sats/1)
+        |> assign(:hero, "transaction #{id}")
       }
     else
       {:error, message} -> {:ok, socket |> assign(:error, message)}
     end
   end
 
-  defp get_prevouts(%BitcoinLib.Transaction{inputs: inputs}) do
+  defp get_prevouts(%BitcoinLib.Transaction{coinbase?: true}), do: []
+
+  defp get_prevouts(%BitcoinLib.Transaction{inputs: inputs, coinbase?: false}) do
     inputs
     |> Enum.map(fn input ->
       with {:ok, transaction} <- Transaction.get(input.txid) do
