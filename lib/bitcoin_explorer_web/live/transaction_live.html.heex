@@ -10,7 +10,7 @@
 
 <%= for input <- @transaction.inputs do %>
 <ul>
-  <li><%= input.txid %>:<%= input.vout %></li>
+  <li><%= link(input.txid, to: "/transaction/#{input.txid}") %>:<%= input.vout %></li>
   <li>Script sig <%= inspect input.script_sig %></li>
   <li>Sequence <%= input.sequence %></li>
 </ul>
@@ -19,6 +19,8 @@
 <h3>Outputs</h3>
 
 <%= for output <- @transaction.outputs do %>
+<p>Total: <%= @total_output_sats %></p>
+
 <ul>
   <li><%= output.value %> sats</li>
   <li>Locking script: <%= inspect output.script_pub_key %></li>
