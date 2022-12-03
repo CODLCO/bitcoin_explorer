@@ -511,18 +511,6 @@ ol {
   list-style: decimal inside
 }
 
-ul {
-  list-style: circle inside
-}
-
-.button,
-button,
-dd,
-dt,
-li {
-  margin-bottom: 1.0rem
-}
-
 fieldset,
 input,
 select,
