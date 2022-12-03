@@ -18,11 +18,12 @@
 
 <h3>Outputs</h3>
 
+<p>Total: <%= @format_sats.(@total_output_sats) %></p>
+
 <%= for output <- @transaction.outputs do %>
-<p>Total: <%= @total_output_sats %></p>
 
 <ul>
-  <li><%= output.value %> sats</li>
+  <li><%= @format_sats.(output.value) %></li>
   <li>Locking script: <%= inspect output.script_pub_key %></li>
 </ul>
 <% end %>

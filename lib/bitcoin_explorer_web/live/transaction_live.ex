@@ -13,6 +13,7 @@ defmodule BitcoinExplorerWeb.TransactionLive do
         socket
         |> assign(:transaction, transaction)
         |> assign(:total_output_sats, total_output_sats(transaction))
+        |> assign(:format_sats, &format_sats/1)
       }
     else
       {:error, message} -> {:ok, socket |> assign(:error, message)}
@@ -23,5 +24,9 @@ defmodule BitcoinExplorerWeb.TransactionLive do
     outputs
     |> Enum.map(& &1.value)
     |> Enum.sum()
+  end
+
+  defp format_sats(value) do
+    Number.SI.number_to_si(value, unit: "sats", separator: " ", precision: 2)
   end
 end
