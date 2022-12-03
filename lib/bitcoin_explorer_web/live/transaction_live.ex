@@ -27,6 +27,7 @@ defmodule BitcoinExplorerWeb.TransactionLive do
   end
 
   defp format_sats(value) do
-    Number.SI.number_to_si(value, unit: "sats", separator: " ", precision: 2)
+    formatted = :erlang.float_to_binary(value / 100_000_000, decimals: 8)
+    "#{formatted} BTC"
   end
 end
