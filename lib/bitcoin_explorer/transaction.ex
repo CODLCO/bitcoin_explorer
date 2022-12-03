@@ -2,7 +2,21 @@ defmodule BitcoinExplorer.Transaction do
   alias BitcoinLib.Transaction
   alias BitcoinLib.Transaction.{Input, Output}
   alias BitcoinLib.Script
-  alias BitcoinLib.Script.Opcodes.Data
+
+  @callback get(binary()) :: %Transaction{}
+
+  def get(txid, bitcoin_core_client \\ BitcoinCoreClient) do
+    result =
+      txid
+      |> bitcoin_core_client.get_transaction()
+      |> BitcoinLib.Transaction.decode()
+
+    with {:ok, transaction, _} <- result do
+      {:ok, transaction}
+    else
+      {:error, message} -> {:error, message}
+    end
+  end
 
   @doc """
   Validate a transaction by id
@@ -13,8 +27,8 @@ defmodule BitcoinExplorer.Transaction do
     true
   """
   @spec validate(binary()) :: {:ok, boolean()} | {:error, binary()}
-  def validate(txid) when is_binary(txid) do
-    with {:ok, transaction, <<>>} <- get_transaction(txid) do
+  def validate(txid, bitcoin_core_client \\ BitcoinCoreClient) when is_binary(txid) do
+    with {:ok, transaction} <- get(txid, bitcoin_core_client) do
       {
         :ok,
         transaction
@@ -58,14 +72,8 @@ defmodule BitcoinExplorer.Transaction do
     end
   end
 
-  defp get_transaction(txid) do
-    txid
-    |> BitcoinCoreClient.get_transaction()
-    |> BitcoinLib.Transaction.decode()
-  end
-
   defp get_utxo(txid, vout) do
-    with {:ok, transaction, <<>>} <- get_transaction(txid) do
+    with {:ok, transaction, <<>>} <- get(txid) do
       {
         :ok,
         transaction.outputs
