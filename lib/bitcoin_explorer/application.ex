@@ -20,6 +20,10 @@ defmodule BitcoinExplorer.Application do
       password: password
     }
 
+    %{ip: electrum_ip, port: electrum_port} =
+      Application.get_env(:bitcoin_explorer, :electrum)
+      |> Enum.into(%{})
+
     children = [
       # Start the Ecto repository
       BitcoinExplorer.Repo,
@@ -34,6 +38,10 @@ defmodule BitcoinExplorer.Application do
       %{
         id: BitcoinCoreClient,
         start: {BitcoinCoreClient, :start_link, [bitcoin_core_rpc_settings]}
+      },
+      %{
+        id: ElectrumClient,
+        start: {ElectrumClient, :start_link, [electrum_ip, electrum_port]}
       }
     ]
 
