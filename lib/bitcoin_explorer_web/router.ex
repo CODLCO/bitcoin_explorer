@@ -19,6 +19,7 @@ defmodule BitcoinExplorerWeb.Router do
 
     live "/", HomeLive, :index
     live "/iterate", IterateLive, :index
+    live "/transaction/:id", TransactionLive, :index
     live "/block/:height", BlockLive, :index
   end
 
