@@ -3,8 +3,14 @@ defmodule BitcoinExplorerWeb.TransactionLive do
 
   require Logger
 
+  alias BitcoinExplorer.Transaction
+
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    {:ok, socket |> assign(:id, id)}
+    with {:ok, transaction} <- Transaction.get(id) do
+      {:ok, socket |> assign(:transaction, transaction)}
+    else
+      {:error, message} -> {:ok, socket |> assign(:error, message)}
+    end
   end
 end
