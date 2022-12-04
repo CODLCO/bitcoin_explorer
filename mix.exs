@@ -53,8 +53,7 @@ defmodule BitcoinExplorer.MixProject do
       {:bitcoin_core_client, path: "../bitcoin_core_client"},
       # {:bitcoinlib, "~> 0.4.1"}
       {:number, "~> 1.0.3"},
-      {:bitcoin_accounting, "~> 0.1.22"},
-      {:bitcoinlib, path: "../bitcoinlib", override: true}
+      {:bitcoin_accounting, "~> 0.1.23"}
     ]
   end
 
