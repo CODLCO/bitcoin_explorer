@@ -10,7 +10,9 @@
 <%= if !@transaction.coinbase? do %>
   <%= for input <- @inputs do %>
     <ul>
-      <li><%= link(input.input.txid, to: "/transaction/#{input.input.txid}") %>:<%= input.input.vout %></li>
+      <li>
+        <.link href={~p"/transaction/#{input.input.txid}"}><%= input.input.txid %></.link>:<%= input.input.vout %>
+      </li>
       <li>Script sig <%= inspect input.input.script_sig %></li>
       <li>Sequence <%= input.input.sequence %></li>
       <li><%= @format_sats.(input.prevout.value) %></li>
