@@ -1,16 +1,16 @@
-<h2>receive</h2>
+<div class="m-2 text-2xl">receive</div>
 
-<ul>
+<ul class="m-2">
 <%= for entry <- @book_entries.receive do %>
   <li>
     <%= if entry.history != [] do %>
       <%= entry.address %>
-      <ul>
+      <ul class="m-2">
         <%= for transaction <- entry.history do %>
           <li>
             <%= transaction.time %>
-            <span style="color: green"><%= inspect transaction.credits %></span>
-            <span style="color: red"><%= inspect transaction.debits %></span>
+            <span class="text-teal-700"><%= inspect transaction.credits %></span>
+            <span class="text-rose-700"><%= inspect transaction.debits %></span>
           </li>
         <% end %>
       </ul>
@@ -19,19 +19,19 @@
 <% end %>
 </ul>
 
-<h2>change</h2>
+<div class="m-2 text-2xl">change</div>
 
-<ul>
+<ul class="m-2">
 <%= for entry <- @book_entries.change do %>
   <li>
     <%= if entry.history != [] do %>
       <%= entry.address %>
-      <ul>
+      <ul class="m-2">
         <%= for transaction <- entry.history do %>
           <li>
             <%= transaction.time %>
-            <span style="color: green"><%= inspect transaction.credits %></span>
-            <span style="color: red"><%= inspect transaction.debits %></span>
+            <span class="text-teal-700"><%= inspect transaction.credits %></span>
+            <span class="text-rose-700"><%= inspect transaction.debits %></span>
           </li>
         <% end %>
       </ul>
