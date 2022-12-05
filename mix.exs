@@ -50,6 +50,7 @@ defmodule BitcoinExplorer.MixProject do
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
+      {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
       {:bitcoin_core_client, path: "../bitcoin_core_client"},
       # {:bitcoinlib, "~> 0.4.1"}
       {:number, "~> 1.0.3"},
@@ -69,7 +70,7 @@ defmodule BitcoinExplorer.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["esbuild default --minify", "phx.digest"]
+      "assets.deploy": ["tailwind default --minify","esbuild default --minify", "phx.digest"]
     ]
   end
 end

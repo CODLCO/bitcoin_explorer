@@ -1,15 +1,15 @@
-<p>
+<div class="opacity-70">
   v<%= @transaction.version %>
   Locktime <%= @transaction.locktime %>
   <%= if @transaction.segwit?, do: "segwit", else: "non-segwit" %>
   <%= if @transaction.coinbase?, do: "coinbase" %>
-</p>
+</div>
 
-<h3>Prevouts</h3>
+<div class="text-xl pt-5">Prevouts</div>
 
 <%= if !@transaction.coinbase? do %>
   <%= for input <- @inputs do %>
-    <ul>
+    <ul class="m-2 opacity-70">
       <li>
         <.link href={~p"/transaction/#{input.input.txid}"}><%= input.input.txid %></.link>:<%= input.input.vout %>
       </li>
@@ -21,13 +21,13 @@
   <% end %>
 <% end %>
 
-<h3>Outputs</h3>
+<div class="text-xl pt-5">Outputs</div>
 
-<p>Total: <%= @format_sats.(@total_output_sats) %></p>
+<div class="opacity-70">Total: <%= @format_sats.(@total_output_sats) %></div>
 
 <%= for output <- @transaction.outputs do %>
 
-<ul>
+<ul class="m-2 opacity-70">
   <li><%= @format_sats.(output.value) %></li>
   <li>Locking script: <%= inspect output.script_pub_key %></li>
 </ul>
