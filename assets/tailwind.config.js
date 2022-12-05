@@ -14,12 +14,12 @@ module.exports = {
       backgroundColor: theme => ({
         'primary': '#1A2238',
         'header': '#253150',
-        'danger': '#ff0000',
+        'secondary': '#b48658',
       }),
       textColor: theme => ({
         'primary': '#b9b9c2de',
         'header': '#b9b9c2de',
-        'danger': '#b9b9c2de',
+        'secondary': '#b48658',
       })
     }
   },
