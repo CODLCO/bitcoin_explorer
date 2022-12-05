@@ -4,13 +4,18 @@
 <%= for entry <- @book_entries.receive do %>
   <li>
     <%= if entry.history != [] do %>
-      <%= if entry.change? do 1 else 0 end %>/<%= entry.index %> <%= entry.address %>
+      <%= if entry.change? do 1 else 0 end %>/<%= entry.index %>
+      <%= entry.address %>
+      <span class="text-teal-700"><%= entry.sum_credits - entry.sum_debits %></span>
       <ul class="m-2">
         <%= for transaction <- entry.history do %>
           <li>
             <.link href={~p"/transaction/#{transaction.txid}"}><%= transaction.time %></.link>
-            <span class="text-teal-700"><%= inspect transaction.credits %></span>
-            <span class="text-rose-700"><%= inspect transaction.debits %></span>
+            <span class="text-teal-700"><%= Enum.join(transaction.credits, "+") %></span>
+            <span class="text-rose-700">
+              <%= if Enum.any?(transaction.debits), do: "-"; %>
+              <%= Enum.join(transaction.debits, "-") %>
+            </span>
           </li>
         <% end %>
       </ul>
@@ -25,13 +30,18 @@
 <%= for entry <- @book_entries.change do %>
   <li>
     <%= if entry.history != [] do %>
-      <%= if entry.change? do 1 else 0 end %>/<%= entry.index %> <%= entry.address %>
+      <%= if entry.change? do 1 else 0 end %>/<%= entry.index %>
+      <%= entry.address %>
+      <span class="text-teal-700"><%= entry.sum_credits - entry.sum_debits %></span>
       <ul class="m-2">
         <%= for transaction <- entry.history do %>
           <li>
-            <%= transaction.time %>
-            <span class="text-teal-700"><%= inspect transaction.credits %></span>
-            <span class="text-rose-700"><%= inspect transaction.debits %></span>
+            <.link href={~p"/transaction/#{transaction.txid}"}><%= transaction.time %></.link>
+            <span class="text-teal-700"><%= Enum.join(transaction.credits, "+") %></span>
+            <span class="text-rose-700">
+              <%= if Enum.any?(transaction.debits), do: "-"; %>
+              <%= Enum.join(transaction.debits, "-") %>
+            </span>
           </li>
         <% end %>
       </ul>
