@@ -8,7 +8,7 @@
       <ul class="m-2">
         <%= for transaction <- entry.history do %>
           <li>
-            <%= transaction.time %>
+            <.link href={~p"/transaction/#{transaction.txid}"}><%= transaction.time %></.link>
             <span class="text-teal-700"><%= inspect transaction.credits %></span>
             <span class="text-rose-700"><%= inspect transaction.debits %></span>
           </li>
