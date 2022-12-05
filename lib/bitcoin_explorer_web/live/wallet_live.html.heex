@@ -4,7 +4,7 @@
 <%= for entry <- @book_entries.receive do %>
   <li>
     <%= if entry.history != [] do %>
-      <%= entry.address %>
+      <%= if entry.change? do 1 else 0 end %>/<%= entry.index %> <%= entry.address %>
       <ul class="m-2">
         <%= for transaction <- entry.history do %>
           <li>
@@ -25,7 +25,7 @@
 <%= for entry <- @book_entries.change do %>
   <li>
     <%= if entry.history != [] do %>
-      <%= entry.address %>
+      <%= if entry.change? do 1 else 0 end %>/<%= entry.index %> <%= entry.address %>
       <ul class="m-2">
         <%= for transaction <- entry.history do %>
           <li>
