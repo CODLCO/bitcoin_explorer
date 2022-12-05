@@ -19,6 +19,8 @@ defmodule BitcoinExplorerWeb.ConnCase do
 
   using do
     quote do
+      use BitcoinExplorerWeb, :verified_routes
+
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest

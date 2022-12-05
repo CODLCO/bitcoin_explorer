@@ -17,6 +17,8 @@ defmodule BitcoinExplorerWeb do
   and import those modules here.
   """
 
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
+
   def controller do
     quote do
       use Phoenix.Controller, namespace: BitcoinExplorerWeb
@@ -24,6 +26,8 @@ defmodule BitcoinExplorerWeb do
       import Plug.Conn
       import BitcoinExplorerWeb.Gettext
       alias BitcoinExplorerWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
     end
   end
 
@@ -98,6 +102,8 @@ defmodule BitcoinExplorerWeb do
       import BitcoinExplorerWeb.ErrorHelpers
       import BitcoinExplorerWeb.Gettext
       alias BitcoinExplorerWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
     end
   end
 
@@ -106,5 +112,14 @@ defmodule BitcoinExplorerWeb do
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: BitcoinExplorerWeb.Endpoint,
+        router: BitcoinExplorerWeb.Router,
+        statics: BitcoinExplorerWeb.static_paths()
+    end
   end
 end
