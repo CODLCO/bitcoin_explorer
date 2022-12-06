@@ -16,7 +16,7 @@
       <li>Script sig <%= inspect input.input.script_sig %></li>
       <li>Sequence <%= input.input.sequence %></li>
       <li><%= @format_sats.(input.prevout.value) %></li>
-      <li>Locking script: <%= inspect input.prevout.script_pub_key %></li>
+      <li>Locking script: <%= BitcoinLib.Script.encode(input.prevout.script_pub_key) |> elem(1) |> Binary.to_hex %></li>
     </ul>
   <% end %>
 <% end %>
