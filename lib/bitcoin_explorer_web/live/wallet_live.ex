@@ -26,7 +26,7 @@ defmodule BitcoinExplorerWeb.WalletLive do
     }
   end
 
-  defp add_sums thing do
+  defp add_sums(thing) do
     thing
     |> Enum.map(fn stuff ->
       credits =

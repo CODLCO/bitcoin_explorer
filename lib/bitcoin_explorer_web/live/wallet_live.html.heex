@@ -1,51 +1,59 @@
 <div class="m-2 text-2xl">receive</div>
 
 <ul class="m-2">
-<%= for entry <- @book_entries.receive do %>
-  <li>
-    <%= if entry.history != [] do %>
-      <%= if entry.change? do 1 else 0 end %>/<%= entry.index %>
-      <%= entry.address %>
-      <span class="text-funds"><%= entry.sum_credits - entry.sum_debits %></span>
-      <ul class="m-2">
-        <%= for transaction <- entry.history do %>
-          <li>
-            <.link href={~p"/transaction/#{transaction.txid}"}><%= transaction.time %></.link>
-            <span class="text-funds"><%= Enum.join(transaction.credits, "+") %></span>
-            <span class="text-debt">
-              <%= if Enum.any?(transaction.debits), do: "-"; %>
-              <%= Enum.join(transaction.debits, "-") %>
-            </span>
-          </li>
-        <% end %>
-      </ul>
-    <% end %>
-  </li>
-<% end %>
+  <%= for entry <- @book_entries.receive do %>
+    <li>
+      <%= if entry.history != [] do %>
+        <%= if entry.change? do
+          1
+        else
+          0
+        end %>/<%= entry.index %>
+        <%= entry.address %>
+        <span class="text-funds"><%= entry.sum_credits - entry.sum_debits %></span>
+        <ul class="m-2">
+          <%= for transaction <- entry.history do %>
+            <li>
+              <.link href={~p"/transaction/#{transaction.txid}"}><%= transaction.time %></.link>
+              <span class="text-funds"><%= Enum.join(transaction.credits, "+") %></span>
+              <span class="text-debt">
+                <%= if Enum.any?(transaction.debits), do: "-" %>
+                <%= Enum.join(transaction.debits, "-") %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </li>
+  <% end %>
 </ul>
 
 <div class="m-2 text-2xl">change</div>
 
 <ul class="m-2">
-<%= for entry <- @book_entries.change do %>
-  <li>
-    <%= if entry.history != [] do %>
-      <%= if entry.change? do 1 else 0 end %>/<%= entry.index %>
-      <%= entry.address %>
-      <span class="text-funds"><%= entry.sum_credits - entry.sum_debits %></span>
-      <ul class="m-2">
-        <%= for transaction <- entry.history do %>
-          <li>
-            <.link href={~p"/transaction/#{transaction.txid}"}><%= transaction.time %></.link>
-            <span class="text-funds"><%= Enum.join(transaction.credits, "+") %></span>
-            <span class="text-debt">
-              <%= if Enum.any?(transaction.debits), do: "-"; %>
-              <%= Enum.join(transaction.debits, "-") %>
-            </span>
-          </li>
-        <% end %>
-      </ul>
-    <% end %>
-  </li>
-<% end %>
+  <%= for entry <- @book_entries.change do %>
+    <li>
+      <%= if entry.history != [] do %>
+        <%= if entry.change? do
+          1
+        else
+          0
+        end %>/<%= entry.index %>
+        <%= entry.address %>
+        <span class="text-funds"><%= entry.sum_credits - entry.sum_debits %></span>
+        <ul class="m-2">
+          <%= for transaction <- entry.history do %>
+            <li>
+              <.link href={~p"/transaction/#{transaction.txid}"}><%= transaction.time %></.link>
+              <span class="text-funds"><%= Enum.join(transaction.credits, "+") %></span>
+              <span class="text-debt">
+                <%= if Enum.any?(transaction.debits), do: "-" %>
+                <%= Enum.join(transaction.debits, "-") %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </li>
+  <% end %>
 </ul>

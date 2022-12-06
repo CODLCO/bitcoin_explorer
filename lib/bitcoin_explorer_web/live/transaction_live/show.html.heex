@@ -1,6 +1,5 @@
 <div class="m-2 opacity-70">
-  v<%= @transaction.version %>
-  Locktime <%= @transaction.locktime %>
+  v<%= @transaction.version %> Locktime <%= @transaction.locktime %>
   <%= if @transaction.segwit?, do: "segwit", else: "non-segwit" %>
   <%= if @transaction.coinbase?, do: "coinbase" %>
 </div>
@@ -15,12 +14,16 @@
   <%= for input <- @inputs do %>
     <ul class="m-2 opacity-70">
       <li>
-        <.link href={~p"/transaction/#{input.input.txid}"}><%= input.input.txid %></.link>:<%= input.input.vout %>
+        <.link href={~p"/transactions/#{input.input.txid}"}><%= input.input.txid %></.link>:<%= input.input.vout %>
       </li>
-      <li>Script sig <%= inspect input.input.script_sig %></li>
+      <li>Script sig <%= inspect(input.input.script_sig) %></li>
       <li>Sequence <%= input.input.sequence %></li>
       <li class="text-funds"><%= @format_sats.(input.prevout.value) %></li>
-      <li>Locking script: <%= BitcoinLib.Script.encode(input.prevout.script_pub_key) |> elem(1) |> Binary.to_hex %></li>
+      <li>
+        Locking script: <%= BitcoinLib.Script.encode(input.prevout.script_pub_key)
+        |> elem(1)
+        |> Binary.to_hex() %>
+      </li>
     </ul>
   <% end %>
 <% end %>
@@ -30,9 +33,12 @@
 <div class="opacity-70">Total: <%= @format_sats.(@total_output_sats) %></div>
 
 <%= for output <- @transaction.outputs do %>
-
-<ul class="m-2 opacity-70">
-  <li class="text-funds"><%= @format_sats.(output.value) %></li>
-  <li>Locking script: <%= BitcoinLib.Script.encode(output.script_pub_key) |> elem(1) |> Binary.to_hex %></li>
-</ul>
+  <ul class="m-2 opacity-70">
+    <li class="text-funds"><%= @format_sats.(output.value) %></li>
+    <li>
+      Locking script: <%= BitcoinLib.Script.encode(output.script_pub_key)
+      |> elem(1)
+      |> Binary.to_hex() %>
+    </li>
+  </ul>
 <% end %>

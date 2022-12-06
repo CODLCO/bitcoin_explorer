@@ -7,11 +7,10 @@ defmodule BitcoinExplorerWeb.TransactionLive.New do
 
   @impl true
   def mount(_params, _session, socket) do
-      {
-        :ok,
-        socket
-        |> assign(:hero, "new transaction")
-
-      }
+    {
+      :ok,
+      socket
+      |> assign(:hero, "new transaction")
+    }
   end
 end
