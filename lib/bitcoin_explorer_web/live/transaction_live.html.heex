@@ -15,7 +15,7 @@
       </li>
       <li>Script sig <%= inspect input.input.script_sig %></li>
       <li>Sequence <%= input.input.sequence %></li>
-      <li class="text-teal-700"><%= @format_sats.(input.prevout.value) %></li>
+      <li class="text-funds"><%= @format_sats.(input.prevout.value) %></li>
       <li>Locking script: <%= BitcoinLib.Script.encode(input.prevout.script_pub_key) |> elem(1) |> Binary.to_hex %></li>
     </ul>
   <% end %>
@@ -28,7 +28,7 @@
 <%= for output <- @transaction.outputs do %>
 
 <ul class="m-2 opacity-70">
-  <li class="text-teal-700"><%= @format_sats.(output.value) %></li>
+  <li class="text-funds"><%= @format_sats.(output.value) %></li>
   <li>Locking script: <%= BitcoinLib.Script.encode(output.script_pub_key) |> elem(1) |> Binary.to_hex %></li>
 </ul>
 <% end %>

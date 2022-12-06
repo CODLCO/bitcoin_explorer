@@ -20,6 +20,8 @@ module.exports = {
         'primary': '#b9b9c2de',
         'header': '#b9b9c2de',
         'secondary': '#b48658',
+        'funds': '#0D9488',
+        'debt': '#BE123C'
       })
     }
   },
