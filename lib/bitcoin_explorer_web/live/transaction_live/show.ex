@@ -1,4 +1,4 @@
-defmodule BitcoinExplorerWeb.TransactionLive do
+defmodule BitcoinExplorerWeb.TransactionLive.Show do
   use BitcoinExplorerWeb, :live_view
 
   require Logger

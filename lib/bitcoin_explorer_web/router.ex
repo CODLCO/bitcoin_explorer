@@ -20,8 +20,12 @@ defmodule BitcoinExplorerWeb.Router do
     live "/", HomeLive, :index
     live "/wallet", WalletLive, :index
     live "/iterate", IterateLive, :index
-    live "/transaction/:id", TransactionLive, :index
     live "/block/:height", BlockLive, :index
+
+    scope "/transactions", TransactionLive do
+      live "/new", New, :new
+      live "/:id", Show, :show
+    end
   end
 
   # Other scopes may use custom stacks.
