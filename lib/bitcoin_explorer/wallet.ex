@@ -3,8 +3,7 @@ defmodule BitcoinExplorer.Wallet do
     entries = BitcoinAccounting.get_book_entries(xpub)
 
     %{
-      receive: entries.receive |> add_sums,
-      change: entries.change |> add_sums
+      entries: (entries.receive ++ entries.change) |> add_sums
     }
   end
 
