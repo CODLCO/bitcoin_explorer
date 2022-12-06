@@ -1,4 +1,4 @@
-<div class="opacity-70">
+<div class="m-2 opacity-70">
   v<%= @transaction.version %>
   Locktime <%= @transaction.locktime %>
   <%= if @transaction.segwit?, do: "segwit", else: "non-segwit" %>
@@ -29,6 +29,6 @@
 
 <ul class="m-2 opacity-70">
   <li><%= @format_sats.(output.value) %></li>
-  <li>Locking script: <%= inspect output.script_pub_key %></li>
+  <li>Locking script: <%= BitcoinLib.Script.encode(output.script_pub_key) |> elem(1) |> Binary.to_hex %></li>
 </ul>
 <% end %>
