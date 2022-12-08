@@ -51,10 +51,9 @@ defmodule BitcoinExplorer.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
-      {:bitcoin_core_client, path: "../bitcoin_core_client"},
-      # {:bitcoinlib, "~> 0.4.1"}
+      {:bitcoin_core_client, "~> 0.1.2"},
       {:number, "~> 1.0.3"},
-      {:bitcoin_accounting, "~> 0.1.24"}
+      {:bitcoin_accounting, "~> 0.1.26"}
     ]
   end
 

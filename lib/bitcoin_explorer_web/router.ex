@@ -21,6 +21,7 @@ defmodule BitcoinExplorerWeb.Router do
     live "/wallet", WalletLive, :index
     live "/iterate", IterateLive, :index
     live "/block/:height", BlockLive, :index
+    live "/send", SendLive, :index
 
     scope "/transactions", TransactionLive do
       live "/new", New, :new
