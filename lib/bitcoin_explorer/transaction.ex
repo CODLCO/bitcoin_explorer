@@ -46,7 +46,7 @@ defmodule BitcoinExplorer.Transaction do
   end
 
   def validate_input(
-        %Transaction{} = transaction,
+        %Transaction{},
         %Input{txid: txid, vout: vout, script_sig: script_sig = script}
       ) do
     {_, _CURVY_MESSAGE} =

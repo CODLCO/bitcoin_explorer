@@ -1,1 +1,12 @@
-<h2>Spend</h2>
+<%= for {address_info, utxos} <- @utxos do %>
+  <div><%= address_info.address %></div>
+  <div class="m-2">
+    <%= for utxo <- utxos do %>
+      <div>
+        <%= utxo.transaction_id %>
+        <%= utxo.vxid %>
+        <%= utxo.value %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
