@@ -1,16 +1,10 @@
 defmodule BitcoinExplorer.Wallet do
-  alias BitcoinExplorer.Wallet.Send
-
   def get_utxos(xpub) do
     entries = BitcoinAccounting.get_book_entries(xpub)
 
     %{
       entries: (entries.receive ++ entries.change) |> add_sums
     }
-  end
-
-  def send(utxo) do
-    Send.from_utxo(utxo)
   end
 
   defp add_sums(thing) do

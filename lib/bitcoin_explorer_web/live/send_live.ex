@@ -1,25 +1,40 @@
 defmodule BitcoinExplorerWeb.SendLive do
   use BitcoinExplorerWeb, :live_view
 
-  alias BitcoinExplorer.Wallet
+  alias BitcoinExplorer.Wallet.Send
+  alias BitcoinLib.Key.PrivateKey
+  alias BitcoinLib.Key.HD.DerivationPath
+
+  @destination_address "myKgsxuFQQvYkVjqUfXJSzoqYcywsCA4VS"
 
   @impl true
   def mount(_params, _session, socket) do
-    [mnemonic_phrase: _, tpub: tpub] = Application.get_env(:bitcoin_explorer, :bitcoin)
+    [mnemonic_phrase: seed_phrase, derivation_path: derivation_path_string, tpub: tpub] =
+      Application.get_env(:bitcoin_explorer, :bitcoin)
+
+    {:ok, derivation_path} = DerivationPath.parse(derivation_path_string)
+
+    master_private_key = PrivateKey.from_seed_phrase(seed_phrase)
+
+    private_key =
+      master_private_key
+      |> PrivateKey.from_derivation_path!(derivation_path)
 
     {
       :ok,
       socket
       |> assign(:hero, "Send coins")
       |> assign(:utxos, get_utxos(tpub))
+      |> assign(:private_key, private_key)
     }
   end
 
   @impl true
-  def handle_event("spend", %{"utxo" => utxo}, socket) do
+  def handle_event("spend", %{"utxo" => utxo}, %{assigns: %{private_key: xpub_private_key}} = socket) do
     utxo
     |> decode()
-    |> Wallet.send()
+    |> IO.inspect(label: "THE UTXO")
+    |> Send.from_utxo(xpub_private_key, @destination_address)
 
     {:noreply, socket}
   end
@@ -37,13 +52,30 @@ defmodule BitcoinExplorerWeb.SendLive do
     |> :erlang.binary_to_term()
   end
 
+  ## need to get change? and index for the address derivation path
   defp get_utxos(xpub) do
     xpub
     |> BitcoinAccounting.get_utxos()
-    |> Enum.map(&elem(&1, 1))
+    |> Enum.map(&extract_utxo/1)
     |> Enum.concat()
     |> Enum.sort(fn %{value: value1}, %{value: value2} -> value1 > value2 end)
     |> add_time
+  end
+
+  defp extract_utxo(
+         {%BitcoinAccounting.XpubManager.AddressInfo{
+            address: address,
+            change?: change?,
+            index: index
+          }, utxo_list}
+       ) do
+    utxo_list
+    |> Enum.map(fn utxo ->
+      utxo
+      |> Map.put(:address, address)
+      |> Map.put(:change?, change?)
+      |> Map.put(:index, index)
+    end)
   end
 
   defp format_integer(integer) do
