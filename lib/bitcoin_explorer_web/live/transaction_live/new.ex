@@ -3,8 +3,6 @@ defmodule BitcoinExplorerWeb.TransactionLive.New do
 
   require Logger
 
-  alias BitcoinExplorer.Transaction
-
   @impl true
   def mount(_params, _session, socket) do
     {

@@ -10,6 +10,9 @@ module.exports = {
     '../lib/*_web/**/*.*ex'
   ],
   theme: {
+    fontFamily: {
+      monospace: ["Anonymous Pro", "monospace"],
+    },
     extend: {
       backgroundColor: theme => ({
         'primary': '#1A2238',

@@ -13,7 +13,8 @@ defmodule BitcoinExplorerWeb.SendLive do
       |> assign(:hero, "Send coins")
       |> assign(:utxos, get_utxos(tpub))
       |> assign(:format_integer, &format_integer/1)
-      |> assign(:shorten_txid, &shorten_txid/1)
+      |> assign(:format_time, &format_time/1)
+      |> assign(:shorten_txid, &shorten_txid/2)
     }
   end
 
@@ -23,6 +24,7 @@ defmodule BitcoinExplorerWeb.SendLive do
     |> Enum.map(& elem(&1, 1))
     |> Enum.concat()
     |> Enum.sort(fn %{value: value1}, %{value: value2} -> value1 > value2 end)
+    |> add_time
   end
 
   defp format_integer integer do
@@ -34,7 +36,21 @@ defmodule BitcoinExplorerWeb.SendLive do
     |> String.reverse
   end
 
-  defp shorten_txid txid do
-    "#{String.slice(txid, 0, @txid_chars_to_show)}...#{String.slice(txid, -@txid_chars_to_show, @txid_chars_to_show)}"
+  defp format_time time do
+    time
+    |> DateTime.to_string()
+  end
+
+  defp add_time(utxo_list) do
+    utxo_list
+    |> Enum.map(fn utxo ->
+      transaction = ElectrumClient.get_transaction(utxo.transaction_id)
+
+      Map.put(utxo, :time, transaction.time)
+    end)
+  end
+
+  defp shorten_txid txid, nb_chars do
+    "#{String.slice(txid, 0, nb_chars)}...#{String.slice(txid, -nb_chars, nb_chars)}"
   end
 end
