@@ -9,7 +9,16 @@ defmodule BitcoinExplorerWeb.SendLive do
       :ok,
       socket
       |> assign(:hero, "Send coins")
-      |> assign(:utxos, BitcoinAccounting.get_utxos(tpub))
+      |> assign(:utxos, get_utxos(tpub))
     }
   end
+
+  defp get_utxos xpub do
+    xpub
+    |> BitcoinAccounting.get_utxos()
+    |> Enum.map(& elem(&1, 1))
+    |> Enum.concat()
+    |> Enum.sort(fn %{value: value1}, %{value: value2} -> value1 > value2 end)
+  end
+
 end

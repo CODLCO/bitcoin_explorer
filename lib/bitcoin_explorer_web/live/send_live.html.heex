@@ -1,8 +1,6 @@
 <div class="grid grid-cols-8 w-fit">
-  <%= for {address_info, utxos} <- @utxos do %>
-    <%= for utxo <- utxos do %>
-      <div class="col-span-7"><%= utxo.transaction_id %>:<%= utxo.vxid %></div>
-      <div class="justify-self-end"><%= utxo.value %></div>
-    <% end %>
+  <%= for utxo <- @utxos do %>
+    <div class="col-span-7"><%= utxo.transaction_id %>:<%= utxo.vxid %></div>
+    <div class="justify-self-end"><%= utxo.value %></div>
   <% end %>
 </div>
