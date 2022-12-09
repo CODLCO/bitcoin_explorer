@@ -1,18 +1,17 @@
 defmodule BitcoinExplorerWeb.SendLive do
   use BitcoinExplorerWeb, :live_view
 
+  alias BitcoinExplorer.Environment
   alias BitcoinExplorer.Wallet.Send
   alias BitcoinLib.Key.PrivateKey
-  alias BitcoinLib.Key.HD.DerivationPath
 
   @destination_address "myKgsxuFQQvYkVjqUfXJSzoqYcywsCA4VS"
 
   @impl true
   def mount(_params, _session, socket) do
-    [mnemonic_phrase: seed_phrase, derivation_path: derivation_path_string, tpub: tpub] =
-      Application.get_env(:bitcoin_explorer, :bitcoin)
-
-    {:ok, derivation_path} = DerivationPath.parse(derivation_path_string)
+    seed_phrase = Environment.seed_phrase()
+    derivation_path = Environment.derivation_path()
+    xpub = Environment.xpub()
 
     master_private_key = PrivateKey.from_seed_phrase(seed_phrase)
 
@@ -24,7 +23,7 @@ defmodule BitcoinExplorerWeb.SendLive do
       :ok,
       socket
       |> assign(:hero, "Send coins")
-      |> assign(:utxos, get_utxos(tpub))
+      |> assign(:utxos, get_utxos(xpub))
       |> assign(:private_key, private_key)
     }
   end
