@@ -1,11 +1,11 @@
-<div class="m-2 grid grid-cols-8 w-fit">
+<div class="m-2 grid grid-cols-7 w-fit">
     <div class="text-gray-500 col-span-6">transaction_id:vout</div>
     <div class="text-gray-500 justify-self-end">sats</div>
 
   <%= for utxo <- @utxos do %>
-    <div class="col-span-6">
+    <div class="col-span-6" title={utxo.transaction_id}>
       <.link href={~p"/transactions/#{utxo.transaction_id}"}>
-        <%= utxo.transaction_id %>:<%= utxo.vxid %>
+        <%= @shorten_txid.(utxo.transaction_id) %>:<%= utxo.vxid %>
       </.link>
     </div>
     <div class="justify-self-end"><%= @format_integer.(utxo.value) %></div>
