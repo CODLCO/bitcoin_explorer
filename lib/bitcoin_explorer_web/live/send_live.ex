@@ -1,8 +1,6 @@
 defmodule BitcoinExplorerWeb.SendLive do
   use BitcoinExplorerWeb, :live_view
 
-  @txid_chars_to_show 10
-
   @impl true
   def mount(_params, _session, socket) do
     [mnemonic_phrase: _, tpub: tpub] = Application.get_env(:bitcoin_explorer, :bitcoin)
@@ -12,10 +10,27 @@ defmodule BitcoinExplorerWeb.SendLive do
       socket
       |> assign(:hero, "Send coins")
       |> assign(:utxos, get_utxos(tpub))
-      |> assign(:format_integer, &format_integer/1)
-      |> assign(:format_time, &format_time/1)
-      |> assign(:shorten_txid, &shorten_txid/2)
     }
+  end
+
+  def handle_event("spend", %{"utxo" => utxo}, socket) do
+    IO.puts "SPEND"
+    IO.inspect decode(utxo), label: "UTXO"
+
+    {:noreply, socket}
+  end
+
+  defp encode(value) do
+    value
+    |> :erlang.term_to_binary()
+    |> Base.encode64()
+  end
+
+  defp decode(value) do
+    value
+    |> Base.decode64()
+    |> elem(1)
+    |> :erlang.binary_to_term()
   end
 
   defp get_utxos(xpub) do

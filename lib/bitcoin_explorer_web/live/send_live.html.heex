@@ -1,15 +1,17 @@
-<div class="m-2 grid grid-cols-4 w-fit font-data text-sm">
+<div class="m-2 grid grid-cols-5 w-fit font-data text-sm">
   <div class="mb-2 text-gray-500 col-span-2">transaction_id:vout</div>
   <div></div>
   <div class="text-gray-500 justify-self-end">sats</div>
+  <div></div>
 
   <%= for utxo <- @utxos do %>
     <div class="col-span-2" title={utxo.transaction_id}>
       <.link href={~p"/transactions/#{utxo.transaction_id}"}>
-        <%= @shorten_txid.(utxo.transaction_id, 12) %>:<%= utxo.vxid %>
+        <%= shorten_txid(utxo.transaction_id, 12) %>:<%= utxo.vxid %>
       </.link>
     </div>
-    <div><%= @format_time.(utxo.time) %></div>
-    <div class="justify-self-end"><%= @format_integer.(utxo.value) %></div>
+    <div><%= format_time(utxo.time) %></div>
+    <div class="justify-self-end"><%= format_integer(utxo.value) %></div>
+    <div class="justify-self-end"><button phx-click="spend" phx-value-utxo={encode utxo} phx-value-vout={utxo.vxid}>spend</button></div>
   <% end %>
 </div>
