@@ -30,7 +30,11 @@ defmodule BitcoinExplorerWeb.SendLive do
   end
 
   @impl true
-  def handle_event("spend", %{"utxo" => utxo}, %{assigns: %{private_key: xpub_private_key}} = socket) do
+  def handle_event(
+        "spend",
+        %{"utxo" => utxo},
+        %{assigns: %{private_key: xpub_private_key}} = socket
+      ) do
     utxo
     |> decode()
     |> IO.inspect(label: "THE UTXO")
@@ -86,6 +90,8 @@ defmodule BitcoinExplorerWeb.SendLive do
     |> Enum.join(" ")
     |> String.reverse()
   end
+
+  defp format_time(nil), do: "in mempool..."
 
   defp format_time(time) do
     time
