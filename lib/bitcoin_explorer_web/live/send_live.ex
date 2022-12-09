@@ -1,6 +1,8 @@
 defmodule BitcoinExplorerWeb.SendLive do
   use BitcoinExplorerWeb, :live_view
 
+  alias BitcoinExplorer.Wallet
+
   @impl true
   def mount(_params, _session, socket) do
     [mnemonic_phrase: _, tpub: tpub] = Application.get_env(:bitcoin_explorer, :bitcoin)
@@ -13,9 +15,11 @@ defmodule BitcoinExplorerWeb.SendLive do
     }
   end
 
+  @impl true
   def handle_event("spend", %{"utxo" => utxo}, socket) do
-    IO.puts "SPEND"
-    IO.inspect decode(utxo), label: "UTXO"
+    utxo
+    |> decode()
+    |> Wallet.send()
 
     {:noreply, socket}
   end
