@@ -6,10 +6,10 @@ defmodule BitcoinExplorer.Environment do
     |> Keyword.get(:seed_phrase)
   end
 
-  def derivation_path do
+  def xpub_derivation_path do
     {:ok, derivation_path} =
       Application.get_env(:bitcoin_explorer, :bitcoin)
-      |> Keyword.get(:derivation_path)
+      |> Keyword.get(:xpub_derivation_path)
       |> DerivationPath.parse()
 
     derivation_path

@@ -11,36 +11,10 @@ defmodule BitcoinExplorer.Wallet.Send do
         %{transaction_id: txid, vxid: vxid, change?: change?, index: index},
         destination_address
       ) do
-    seed_phrase = Environment.seed_phrase()
-    derivation_path = Environment.derivation_path()
-    master_private_key = PrivateKey.from_seed_phrase(seed_phrase)
-
-    xpub_private_key =
-      master_private_key
-      |> PrivateKey.from_derivation_path!(derivation_path)
-
-    change_id = if change?, do: 1, else: 0
-
-    private_key =
-      xpub_private_key
-      |> PrivateKey.derive_child!(change_id)
-      |> PrivateKey.derive_child!(index)
-
-    vout =
-      txid
-      |> BitcoinCoreClient.get_transaction()
-      |> BitcoinLib.Transaction.decode()
-      |> elem(1)
-      |> Map.get(:outputs)
-      |> Enum.at(vxid)
-      |> IO.inspect(label: "original vout")
-
-    script_pub_key =
-      Script.encode(vout.script_pub_key)
-      |> elem(1)
-      |> Binary.to_hex()
-
-    {:ok, destination_public_hash, _type, _network} = Address.destructure(destination_address)
+    private_key = get_private_key(change?, index)
+    vout = get_vout(txid, vxid)
+    script_pub_key = get_script_pub_key(vout)
+    destination_public_hash = get_destination_public_hash(destination_address)
 
     original_amount = vout.value
     fee = 500
@@ -59,5 +33,38 @@ defmodule BitcoinExplorer.Wallet.Send do
     )
     |> Transaction.Spec.sign_and_encode(private_key)
     |> IO.inspect()
+  end
+
+  defp get_private_key(change?, index) do
+    seed_phrase = Environment.seed_phrase()
+    xpub_derivation_path = Environment.xpub_derivation_path()
+
+    change_id = if change?, do: 1, else: 0
+
+    PrivateKey.from_seed_phrase(seed_phrase)
+    |> PrivateKey.from_derivation_path!(xpub_derivation_path)
+    |> PrivateKey.derive_child!(change_id)
+    |> PrivateKey.derive_child!(index)
+  end
+
+  defp get_vout(txid, vxid) do
+    txid
+    |> BitcoinCoreClient.get_transaction()
+    |> BitcoinLib.Transaction.decode()
+    |> elem(1)
+    |> Map.get(:outputs)
+    |> Enum.at(vxid)
+  end
+
+  defp get_script_pub_key(vout) do
+    Script.encode(vout.script_pub_key)
+    |> elem(1)
+    |> Binary.to_hex()
+  end
+
+  defp get_destination_public_hash(destination_address) do
+    {:ok, destination_public_hash, _type, _network} = Address.destructure(destination_address)
+
+    destination_public_hash
   end
 end
