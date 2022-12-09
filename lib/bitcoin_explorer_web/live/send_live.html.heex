@@ -3,7 +3,11 @@
     <div class="text-gray-500 justify-self-end">sats</div>
 
   <%= for utxo <- @utxos do %>
-    <div class="col-span-6"><%= utxo.transaction_id %>:<%= utxo.vxid %></div>
+    <div class="col-span-6">
+      <.link href={~p"/transactions/#{utxo.transaction_id}"}>
+        <%= utxo.transaction_id %>:<%= utxo.vxid %>
+      </.link>
+    </div>
     <div class="justify-self-end"><%= @format_integer.(utxo.value) %></div>
   <% end %>
 </div>

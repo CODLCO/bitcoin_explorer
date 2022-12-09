@@ -24,7 +24,7 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   defp format_integer integer do
     integer
-    |> Integer.to_char_list
+    |> Integer.to_charlist
     |> Enum.reverse
     |> Enum.chunk_every(3)
     |> Enum.join(" ")
