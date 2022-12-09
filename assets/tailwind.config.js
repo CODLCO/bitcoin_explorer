@@ -11,7 +11,7 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      monospace: ["Anonymous Pro", "monospace"],
+      data: ["Martian Mono", "monospace"],
     },
     extend: {
       backgroundColor: theme => ({
