@@ -18,25 +18,25 @@ defmodule BitcoinExplorerWeb.SendLive do
     }
   end
 
-  defp get_utxos xpub do
+  defp get_utxos(xpub) do
     xpub
     |> BitcoinAccounting.get_utxos()
-    |> Enum.map(& elem(&1, 1))
+    |> Enum.map(&elem(&1, 1))
     |> Enum.concat()
     |> Enum.sort(fn %{value: value1}, %{value: value2} -> value1 > value2 end)
     |> add_time
   end
 
-  defp format_integer integer do
+  defp format_integer(integer) do
     integer
-    |> Integer.to_charlist
-    |> Enum.reverse
+    |> Integer.to_charlist()
+    |> Enum.reverse()
     |> Enum.chunk_every(3)
     |> Enum.join(" ")
-    |> String.reverse
+    |> String.reverse()
   end
 
-  defp format_time time do
+  defp format_time(time) do
     time
     |> DateTime.to_string()
   end
@@ -50,7 +50,7 @@ defmodule BitcoinExplorerWeb.SendLive do
     end)
   end
 
-  defp shorten_txid txid, nb_chars do
+  defp shorten_txid(txid, nb_chars) do
     "#{String.slice(txid, 0, nb_chars)}...#{String.slice(txid, -nb_chars, nb_chars)}"
   end
 end
