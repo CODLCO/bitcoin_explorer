@@ -3,41 +3,26 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   alias BitcoinExplorer.Environment
   alias BitcoinExplorer.Wallet.Send
-  alias BitcoinLib.Key.PrivateKey
 
   @destination_address "myKgsxuFQQvYkVjqUfXJSzoqYcywsCA4VS"
 
   @impl true
   def mount(_params, _session, socket) do
-    seed_phrase = Environment.seed_phrase()
-    derivation_path = Environment.derivation_path()
     xpub = Environment.xpub()
-
-    master_private_key = PrivateKey.from_seed_phrase(seed_phrase)
-
-    private_key =
-      master_private_key
-      |> PrivateKey.from_derivation_path!(derivation_path)
 
     {
       :ok,
       socket
       |> assign(:hero, "Send coins")
       |> assign(:utxos, get_utxos(xpub))
-      |> assign(:private_key, private_key)
     }
   end
 
   @impl true
-  def handle_event(
-        "spend",
-        %{"utxo" => utxo},
-        %{assigns: %{private_key: xpub_private_key}} = socket
-      ) do
+  def handle_event("spend", %{"utxo" => utxo}, socket) do
     utxo
     |> decode()
-    |> IO.inspect(label: "THE UTXO")
-    |> Send.from_utxo(xpub_private_key, @destination_address)
+    |> Send.from_utxo(@destination_address)
 
     {:noreply, socket}
   end

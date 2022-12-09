@@ -1,4 +1,5 @@
 defmodule BitcoinExplorer.Wallet.Send do
+  alias BitcoinExplorer.Environment
   alias BitcoinLib.Transaction
   alias BitcoinLib.Script
   alias BitcoinLib.Address
@@ -8,9 +9,16 @@ defmodule BitcoinExplorer.Wallet.Send do
   ### make sure tx and utxo amounts match
   def from_utxo(
         %{transaction_id: txid, vxid: vxid, change?: change?, index: index},
-        %PrivateKey{} = xpub_private_key,
         destination_address
       ) do
+    seed_phrase = Environment.seed_phrase()
+    derivation_path = Environment.derivation_path()
+    master_private_key = PrivateKey.from_seed_phrase(seed_phrase)
+
+    xpub_private_key =
+      master_private_key
+      |> PrivateKey.from_derivation_path!(derivation_path)
+
     change_id = if change?, do: 1, else: 0
 
     private_key =
