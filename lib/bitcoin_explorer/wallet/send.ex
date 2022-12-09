@@ -32,7 +32,7 @@ defmodule BitcoinExplorer.Wallet.Send do
       destination_amount
     )
     |> Transaction.Spec.sign_and_encode(private_key)
-    |> IO.inspect()
+    |> ElectrumClient.broadcast_transaction()
   end
 
   defp get_private_key(change?, index) do
