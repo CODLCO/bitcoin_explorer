@@ -52,7 +52,7 @@ defmodule BitcoinExplorer.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
-      {:bitcoin_core_client, "~> 0.1.2"},
+      {:bitcoin_core_client, "~> 0.1.3"},
       {:number, "~> 1.0.3"},
       {:bitcoin_accounting, "~> 0.1.28"}
     ]

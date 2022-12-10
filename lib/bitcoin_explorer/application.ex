@@ -5,11 +5,17 @@ defmodule BitcoinExplorer.Application do
 
   use Application
 
-  alias BitcoinCoreClient.Rpc
+  alias BitcoinCoreClient.{Rpc, Zmq}
 
   @impl true
   def start(_type, _args) do
-    %{ip: ip, port: port, username: username, password: password} =
+    %{
+      ip: ip,
+      port: port,
+      username: username,
+      password: password,
+      zmq_pub_raw_block_port: zmq_pub_raw_block_port
+    } =
       Application.get_env(:bitcoin_explorer, :bitcoin_core)
       |> Enum.into(%{})
 
@@ -19,6 +25,8 @@ defmodule BitcoinExplorer.Application do
       username: username,
       password: password
     }
+
+    zmq_settings = %Zmq.Settings{ip: ip, port: zmq_pub_raw_block_port}
 
     %{ip: electrum_ip, port: electrum_port} =
       Application.get_env(:bitcoin_explorer, :electrum)
@@ -42,6 +50,14 @@ defmodule BitcoinExplorer.Application do
       %{
         id: ElectrumClient,
         start: {ElectrumClient, :start_link, [electrum_ip, electrum_port]}
+      },
+      %{
+        id: Zmq.BlockListener,
+        start: {Zmq.BlockListener, :start_link, [zmq_settings]}
+      },
+      %{
+        id: BitcoinCoreClient.Subscriptions,
+        start: {BitcoinCoreClient.Subscriptions, :start_link, []}
       }
     ]
 
