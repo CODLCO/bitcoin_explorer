@@ -10,9 +10,10 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    xpub = Environment.xpub()
-    utxos = get_utxos(xpub)
+    utxos = get_utxos()
     balance = calculate_balance(utxos)
+
+    BitcoinCoreClient.Subscriptions.subscribe_blocks()
 
     {
       :ok,
@@ -34,12 +35,21 @@ defmodule BitcoinExplorerWeb.SendLive do
         Logger.warning(message)
     end
 
-    xpub = Environment.xpub()
+    {
+      :noreply,
+      socket
+      |> assign(:utxos, get_utxos())
+    }
+  end
+
+  @impl true
+  def handle_info(message, socket) do
+    IO.inspect(message, label: "handle_info in send_live")
 
     {
       :noreply,
       socket
-      |> assign(:utxos, get_utxos(xpub))
+      |> assign(:utxos, get_utxos())
     }
   end
 
@@ -57,8 +67,8 @@ defmodule BitcoinExplorerWeb.SendLive do
   end
 
   ## need to get change? and index for the address derivation path
-  defp get_utxos(xpub) do
-    xpub
+  defp get_utxos() do
+    Environment.xpub()
     |> BitcoinAccounting.get_utxos()
     |> Enum.map(&extract_utxo/1)
     |> Enum.concat()
