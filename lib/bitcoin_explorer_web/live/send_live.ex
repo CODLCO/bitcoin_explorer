@@ -1,6 +1,8 @@
 defmodule BitcoinExplorerWeb.SendLive do
   use BitcoinExplorerWeb, :live_view
 
+  require Logger
+
   alias BitcoinExplorer.Environment
   alias BitcoinExplorer.Wallet.Send
 
@@ -19,12 +21,23 @@ defmodule BitcoinExplorerWeb.SendLive do
   end
 
   @impl true
-  def handle_event("spend", %{"utxo" => utxo}, socket) do
-    utxo
-    |> decode()
-    |> Send.from_utxo(@destination_address)
+  def handle_event("spend", %{"utxo" => encoded_utxo}, socket) do
+    utxo = decode(encoded_utxo)
 
-    {:noreply, socket}
+    with {:ok, txid} <- Send.from_utxo(utxo, @destination_address) do
+      Logger.info("Broadcasted #{txid}")
+    else
+      {:error, message} ->
+        Logger.warning(message)
+    end
+
+    xpub = Environment.xpub()
+
+    {
+      :noreply,
+      socket
+      |> assign(:utxos, get_utxos(xpub))
+    }
   end
 
   defp encode(value) do
