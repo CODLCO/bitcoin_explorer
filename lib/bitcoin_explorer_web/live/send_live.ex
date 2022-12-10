@@ -11,12 +11,15 @@ defmodule BitcoinExplorerWeb.SendLive do
   @impl true
   def mount(_params, _session, socket) do
     xpub = Environment.xpub()
+    utxos = get_utxos(xpub)
+    balance = calculate_balance(utxos)
 
     {
       :ok,
       socket
       |> assign(:hero, "Send coins")
-      |> assign(:utxos, get_utxos(xpub))
+      |> assign(:utxos, utxos)
+      |> assign(:balance, balance)
     }
   end
 
@@ -77,6 +80,12 @@ defmodule BitcoinExplorerWeb.SendLive do
       |> Map.put(:change?, change?)
       |> Map.put(:index, index)
     end)
+  end
+
+  defp calculate_balance(utxos) do
+    utxos
+    |> Enum.map(& &1.value)
+    |> Enum.sum()
   end
 
   defp format_integer(integer) do
