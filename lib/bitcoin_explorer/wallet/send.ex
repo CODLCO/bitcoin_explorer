@@ -11,28 +11,31 @@ defmodule BitcoinExplorer.Wallet.Send do
         %{transaction_id: txid, vxid: vxid, change?: change?, index: index},
         destination_address
       ) do
-    private_key = get_private_key(change?, index)
-    vout = get_vout(txid, vxid)
-    script_pub_key = get_script_pub_key(vout)
-    destination_public_hash = get_destination_public_hash(destination_address)
+    with {:ok, private_key} <- get_private_key(change?, index) do
+      vout = get_vout(txid, vxid)
+      script_pub_key = get_script_pub_key(vout)
+      destination_public_hash = get_destination_public_hash(destination_address)
 
-    original_amount = vout.value
-    fee = 500
-    destination_amount = original_amount - fee
+      original_amount = vout.value
+      fee = 500
+      destination_amount = original_amount - fee
 
-    %Transaction.Spec{}
-    |> Transaction.Spec.add_input!(
-      txid: txid,
-      vout: vxid,
-      redeem_script: script_pub_key
-    )
-    |> Transaction.Spec.add_output(
-      destination_public_hash
-      |> Script.Types.P2pkh.create(),
-      destination_amount
-    )
-    |> Transaction.Spec.sign_and_encode(private_key)
-    |> ElectrumClient.broadcast_transaction()
+      %Transaction.Spec{}
+      |> Transaction.Spec.add_input!(
+        txid: txid,
+        vout: vxid,
+        redeem_script: script_pub_key
+      )
+      |> Transaction.Spec.add_output(
+        destination_public_hash
+        |> Script.Types.P2pkh.create(),
+        destination_amount
+      )
+      |> Transaction.Spec.sign_and_encode(private_key)
+      |> ElectrumClient.broadcast_transaction()
+    else
+      {:error, message} -> {:error, message}
+    end
   end
 
   defp get_private_key(change?, index) do
@@ -41,10 +44,15 @@ defmodule BitcoinExplorer.Wallet.Send do
 
     change_id = if change?, do: 1, else: 0
 
-    PrivateKey.from_seed_phrase(seed_phrase)
-    |> PrivateKey.from_derivation_path!(xpub_derivation_path)
-    |> PrivateKey.derive_child!(change_id)
-    |> PrivateKey.derive_child!(index)
+    private_key = PrivateKey.from_seed_phrase(seed_phrase)
+
+    with {:ok, private_key} <- PrivateKey.from_derivation_path(private_key, xpub_derivation_path),
+         {:ok, private_key} <- PrivateKey.derive_child(private_key, change_id),
+         {:ok, private_key} <- PrivateKey.derive_child(private_key, index) do
+      {:ok, private_key}
+    else
+      {:error, message} -> {:error, message}
+    end
   end
 
   defp get_vout(txid, vxid) do
