@@ -10,17 +10,13 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    utxos = get_utxos()
-    balance = calculate_balance(utxos)
-
     BitcoinCoreClient.Subscriptions.subscribe_blocks()
 
     {
       :ok,
       socket
       |> assign(:hero, "Send coins")
-      |> assign(:utxos, utxos)
-      |> assign(:balance, balance)
+      |> refresh_utxos
     }
   end
 
@@ -28,17 +24,16 @@ defmodule BitcoinExplorerWeb.SendLive do
   def handle_event("spend", %{"utxo" => encoded_utxo}, socket) do
     utxo = decode(encoded_utxo)
 
-    with {:ok, txid} <- Send.from_utxo(utxo, @destination_address) do
-      Logger.info("Broadcasted #{txid}")
-    else
-      {:error, message} ->
-        Logger.warning(message)
-    end
+    socket =
+      case Send.from_utxo(utxo, @destination_address) do
+        {:ok, txid} -> socket |> put_flash(:info, "Broadcasted #{txid}")
+        {:error, message} -> socket |> put_flash(:error, message)
+      end
 
     {
       :noreply,
       socket
-      |> assign(:utxos, get_utxos())
+      |> refresh_utxos()
     }
   end
 
@@ -64,6 +59,15 @@ defmodule BitcoinExplorerWeb.SendLive do
     |> Base.decode64()
     |> elem(1)
     |> :erlang.binary_to_term()
+  end
+
+  defp refresh_utxos(socket) do
+    utxos = get_utxos()
+    balance = calculate_balance(utxos)
+
+    socket
+    |> assign(:utxos, utxos)
+    |> assign(:balance, balance)
   end
 
   ## need to get change? and index for the address derivation path
