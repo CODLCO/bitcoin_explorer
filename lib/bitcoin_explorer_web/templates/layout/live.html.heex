@@ -1,12 +1,22 @@
 <main>
   <%= if Phoenix.Flash.get(@flash, :info) do %>
-    <p class="alert alert-info" role="alert" phx-click="lv:clear-flash" phx-value-key="info">
+    <p
+      class="m-2 p-2 bg-emerald-500 text-gray-800"
+      role="alert"
+      phx-click="lv:clear-flash"
+      phx-value-key="info"
+    >
       <%= Phoenix.Flash.get(@flash, :info) |> IO.inspect() %>
     </p>
   <% end %>
 
   <%= if Phoenix.Flash.get(@flash, :error) do %>
-    <p class="alert alert-danger" role="alert" phx-click="lv:clear-flash" phx-value-key="error">
+    <p
+      class="m-2 p-2 bg-red-400 text-gray-800"
+      role="alert"
+      phx-click="lv:clear-flash"
+      phx-value-key="error"
+    >
       <%= live_flash(@flash, :error) %>
     </p>
   <% end %>
