@@ -2,6 +2,9 @@
   v<%= @transaction.version %> Locktime <%= @transaction.locktime %>
   <%= if @transaction.segwit?, do: "segwit", else: "non-segwit" %>
   <%= if @transaction.coinbase?, do: "coinbase" %>
+  <span class="font-medium text-blue-500 hover:underline">
+    <.link href={@mempool_space_url}>mempool.space</.link>
+  </span>
 </div>
 
 <div class="text-xl pt-5">Change</div>
