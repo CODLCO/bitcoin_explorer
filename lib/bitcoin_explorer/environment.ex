@@ -28,4 +28,9 @@ defmodule BitcoinExplorer.Environment do
     |> PublicKey.from_private_key()
     |> PublicKey.serialize!(derivation_path.network)
   end
+
+  def network do
+    Environment.xpub_derivation_path()
+    |> Map.get(:network)
+  end
 end
