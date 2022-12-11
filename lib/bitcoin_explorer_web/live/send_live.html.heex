@@ -1,9 +1,10 @@
 <div class="m-2">Balance: <%= format_integer(@balance) %> sats</div>
 
-<div class="m-2 grid grid-cols-5 w-fit font-data text-sm">
+<div class="m-2 grid grid-cols-6 w-fit font-data text-sm">
   <div class="mb-2 text-gray-500 col-span-2">transaction_id:vout</div>
   <div></div>
   <div class="text-gray-500 justify-self-end">sats</div>
+  <div class="text-gray-500 justify-self-end">selected</div>
   <div></div>
 
   <%= for utxo <- @utxos do %>
@@ -13,7 +14,15 @@
       </.link>
     </div>
     <div><%= format_time(utxo.time) %></div>
-    <div class="justify-self-end"><%= format_integer(utxo.value) %></div>
+    <div
+      class="justify-self-end"
+      phx-click="toggle_utxo"
+      phx-value-txid={utxo.transaction_id}
+      phx-value-vout={utxo.vxid}
+    >
+      <%= format_integer(utxo.value) %>
+    </div>
+    <div class="justify-self-end"><%= utxo.selected %></div>
     <div class="justify-self-end">
       <button phx-click="spend" phx-value-utxo={encode(utxo)} phx-value-vout={utxo.vxid}>
         spend

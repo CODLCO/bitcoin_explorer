@@ -38,9 +38,22 @@ defmodule BitcoinExplorerWeb.SendLive do
   end
 
   @impl true
-  def handle_info(message, socket) do
-    IO.inspect(message, label: "handle_info in send_live")
+  def handle_event(
+        "toggle_utxo",
+        %{"txid" => txid, "vout" => vout},
+        socket
+      ) do
+    {vout, _} = Integer.parse(vout)
 
+    {
+      :noreply,
+      socket
+      |> toggle_utxo_selection(txid, vout)
+    }
+  end
+
+  @impl true
+  def handle_info(_message, socket) do
     {
       :noreply,
       socket
@@ -93,6 +106,7 @@ defmodule BitcoinExplorerWeb.SendLive do
       |> Map.put(:address, address)
       |> Map.put(:change?, change?)
       |> Map.put(:index, index)
+      |> Map.put(:selected, false)
     end)
   end
 
@@ -129,5 +143,20 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   defp shorten_txid(txid, nb_chars) do
     "#{String.slice(txid, 0, nb_chars)}...#{String.slice(txid, -nb_chars, nb_chars)}"
+  end
+
+  defp toggle_utxo_selection(socket, txid, vout) do
+    utxos = socket.assigns.utxos
+
+    utxos =
+      utxos
+      |> Enum.map(fn utxo ->
+        if utxo.transaction_id == txid && utxo.vxid == vout,
+          do: Map.put(utxo, :selected, !utxo.selected),
+          else: utxo
+      end)
+
+    socket
+    |> assign(utxos: utxos)
   end
 end
