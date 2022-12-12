@@ -1,21 +1,19 @@
 <div class="m-2">Balance: <%= format_integer(@balance) %> sats</div>
 
-<form class="m-2">
-  <div class="grid gap-6 mb-6 md:grid-cols-2">
-    <div>
-      <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        Fee
-      </label>
-      <input
-        type="text"
-        id="fee"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder="250"
-        required
-      />
-    </div>
-  </div>
-</form>
+<div class="m-2 mb-5 relative z-0">
+  <input
+    type="text"
+    id="floating_standard"
+    class="block py-2.5 px-0 w-20 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+    placeholder=" "
+  />
+  <label
+    for="floating_standard"
+    class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+  >
+    Default fee
+  </label>
+</div>
 
 <div class="m-2 grid grid-cols-6 w-fit font-data text-sm">
   <div class="mb-2 text-gray-500 col-span-2">transaction_id:vout</div>
@@ -29,6 +27,7 @@
       <.link href={~p"/transactions/#{utxo.transaction_id}"}>
         <%= shorten_txid(utxo.transaction_id, 12) %>:<%= utxo.vxid %>
       </.link>
+      
     </div>
     <div><%= format_time(utxo.time) %></div>
     <div
@@ -47,3 +46,23 @@
     </div>
   <% end %>
 </div>
+
+<footer class="p-4 bg-white rounded-lg shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800">
+  <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+    © 2022 <a href="https://flowbite.com/" class="hover:underline">Flowbite™</a>. All Rights Reserved.
+  </span>
+  <ul class="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+    <li>
+      <a href="#" class="mr-4 hover:underline md:mr-6 ">About</a>
+    </li>
+    <li>
+      <a href="#" class="mr-4 hover:underline md:mr-6">Privacy Policy</a>
+    </li>
+    <li>
+      <a href="#" class="mr-4 hover:underline md:mr-6">Licensing</a>
+    </li>
+    <li>
+      <a href="#" class="hover:underline">Contact</a>
+    </li>
+  </ul>
+</footer>
