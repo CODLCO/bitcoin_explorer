@@ -6,9 +6,11 @@ defmodule BitcoinExplorerWeb.Components.Utxo do
   def utxo(assigns) do
     ~H"""
     <div class="col-span-2" title={@utxo.transaction_id}>
-      <.link href={~p"/transactions/#{@utxo.transaction_id}"}>
-        <%= Formatter.shorten_txid(@utxo.transaction_id, 12) %>:<%= @utxo.vxid %>
-      </.link>
+      <div class={is_selected_class(@utxo)}>
+        <.link href={~p"/transactions/#{@utxo.transaction_id}"}>
+          <%= Formatter.shorten_txid(@utxo.transaction_id, 12) %>:<%= @utxo.vxid %>
+        </.link>
+      </div>
     </div>
     <div><%= format_time(@utxo.time) %></div>
     <div
@@ -29,6 +31,8 @@ defmodule BitcoinExplorerWeb.Components.Utxo do
   end
 
   defp format_time(nil), do: "in mempool..."
-
   defp format_time(datetime), do: Formatter.datetime(datetime)
+
+  defp is_selected_class(%{selected: true}), do: "text-yellow-600"
+  defp is_selected_class(%{selected: false}), do: ""
 end
