@@ -15,7 +15,7 @@ defmodule BitcoinExplorerWeb.Components.Utxo do
       <%= for utxo <- @utxos do %>
         <div class="col-span-2" title={utxo.transaction_id}>
           <.link href={~p"/transactions/#{utxo.transaction_id}"}>
-            <%= shorten_txid(utxo.transaction_id, 12) %>:<%= utxo.vxid %>
+            <%= Formatter.shorten_txid(utxo.transaction_id, 12) %>:<%= utxo.vxid %>
           </.link>
         </div>
         <div><%= format_time(utxo.time) %></div>
@@ -36,10 +36,6 @@ defmodule BitcoinExplorerWeb.Components.Utxo do
       <% end %>
     </div>
     """
-  end
-
-  defp shorten_txid(txid, nb_chars) do
-    "#{String.slice(txid, 0, nb_chars)}...#{String.slice(txid, -nb_chars, nb_chars)}"
   end
 
   defp format_time(nil), do: "in mempool..."

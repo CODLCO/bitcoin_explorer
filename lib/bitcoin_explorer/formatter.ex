@@ -12,4 +12,8 @@ defmodule BitcoinExplorer.Formatter do
     datetime
     |> DateTime.to_string()
   end
+
+  def shorten_txid(txid, nb_chars) do
+    "#{String.slice(txid, 0, nb_chars)}...#{String.slice(txid, -nb_chars, nb_chars)}"
+  end
 end
