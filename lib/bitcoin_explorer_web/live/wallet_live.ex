@@ -4,15 +4,14 @@ defmodule BitcoinExplorerWeb.WalletLive do
   require Logger
 
   alias BitcoinExplorer.Wallet
+  alias BitcoinExplorer.Environment
 
   @impl true
   def mount(%{}, _session, socket) do
-    [mnemonic_phrase: _, tpub: tpub] = Application.get_env(:bitcoin_explorer, :bitcoin)
-
     {
       :ok,
       socket
-      |> assign(:book_entries, Wallet.get_utxos(tpub))
+      |> assign(:book_entries, Wallet.get_utxos(Environment.xpub()))
       |> assign(:hero, "The wallet")
     }
   end

@@ -1,6 +1,8 @@
 defmodule BitcoinExplorerWeb.Components.Utxo do
   use BitcoinExplorerWeb, :component
 
+  alias BitcoinExplorer.Formatter
+
   def utxo_list(assigns) do
     ~H"""
     <div class="m-2 grid grid-cols-6 w-fit font-data text-sm">
@@ -23,7 +25,7 @@ defmodule BitcoinExplorerWeb.Components.Utxo do
           phx-value-txid={utxo.transaction_id}
           phx-value-vout={utxo.vxid}
         >
-          <%= format_integer(utxo.value) %>
+          <%= Formatter.integer(utxo.value) %>
         </div>
         <div class="justify-self-end"><%= utxo.selected %></div>
         <div class="justify-self-end">
@@ -42,19 +44,7 @@ defmodule BitcoinExplorerWeb.Components.Utxo do
 
   defp format_time(nil), do: "in mempool..."
 
-  defp format_time(time) do
-    time
-    |> DateTime.to_string()
-  end
-
-  defp format_integer(integer) do
-    integer
-    |> Integer.to_charlist()
-    |> Enum.reverse()
-    |> Enum.chunk_every(3)
-    |> Enum.join(" ")
-    |> String.reverse()
-  end
+  defp format_time(datetime), do: Formatter.datetime(datetime)
 
   defp encode(value) do
     value

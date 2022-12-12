@@ -3,8 +3,9 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   require Logger
 
-  alias BitcoinExplorer.Environment
   alias BitcoinExplorer.Wallet.Send
+  alias BitcoinExplorer.Environment
+  alias BitcoinExplorer.Formatter
 
   import BitcoinExplorerWeb.Components.Utxo
 
@@ -110,15 +111,6 @@ defmodule BitcoinExplorerWeb.SendLive do
     utxos
     |> Enum.map(& &1.value)
     |> Enum.sum()
-  end
-
-  defp format_integer(integer) do
-    integer
-    |> Integer.to_charlist()
-    |> Enum.reverse()
-    |> Enum.chunk_every(3)
-    |> Enum.join(" ")
-    |> String.reverse()
   end
 
   defp toggle_utxo_selection(socket, txid, vout) do
