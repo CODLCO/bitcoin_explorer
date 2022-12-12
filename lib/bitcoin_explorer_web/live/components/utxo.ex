@@ -1,7 +1,7 @@
 defmodule BitcoinExplorerWeb.Components.Utxo do
   use BitcoinExplorerWeb, :component
 
-  alias BitcoinExplorer.Formatter
+  alias BitcoinExplorer.{Encoder, Formatter}
 
   def utxo_list(assigns) do
     ~H"""
@@ -29,7 +29,7 @@ defmodule BitcoinExplorerWeb.Components.Utxo do
         </div>
         <div class="justify-self-end"><%= utxo.selected %></div>
         <div class="justify-self-end">
-          <button phx-click="spend" phx-value-utxo={encode(utxo)} phx-value-vout={utxo.vxid}>
+          <button phx-click="spend" phx-value-utxo={Encoder.encode(utxo)} phx-value-vout={utxo.vxid}>
             spend
           </button>
         </div>
@@ -45,10 +45,4 @@ defmodule BitcoinExplorerWeb.Components.Utxo do
   defp format_time(nil), do: "in mempool..."
 
   defp format_time(datetime), do: Formatter.datetime(datetime)
-
-  defp encode(value) do
-    value
-    |> :erlang.term_to_binary()
-    |> Base.encode64()
-  end
 end

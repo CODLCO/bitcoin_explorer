@@ -4,8 +4,7 @@ defmodule BitcoinExplorerWeb.SendLive do
   require Logger
 
   alias BitcoinExplorer.Wallet.Send
-  alias BitcoinExplorer.Environment
-  alias BitcoinExplorer.Formatter
+  alias BitcoinExplorer.{Encoder, Environment, Formatter}
 
   import BitcoinExplorerWeb.Components.Utxo
 
@@ -25,7 +24,7 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   @impl true
   def handle_event("spend", %{"utxo" => encoded_utxo}, socket) do
-    utxo = decode(encoded_utxo)
+    utxo = Encoder.decode(encoded_utxo)
 
     socket =
       case Send.from_utxo(utxo, @destination_address) do
@@ -62,13 +61,6 @@ defmodule BitcoinExplorerWeb.SendLive do
       socket
       |> assign(:utxos, get_utxos())
     }
-  end
-
-  defp decode(value) do
-    value
-    |> Base.decode64()
-    |> elem(1)
-    |> :erlang.binary_to_term()
   end
 
   defp refresh_utxos(socket) do
