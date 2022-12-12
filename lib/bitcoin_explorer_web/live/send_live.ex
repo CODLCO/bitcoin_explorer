@@ -5,6 +5,7 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   alias BitcoinExplorer.Wallet.Send
   alias BitcoinExplorer.{Encoder, Environment, Formatter}
+  alias BitcoinExplorer.Changesets
 
   import BitcoinExplorerWeb.Components.{Textbox, UtxoList}
 
@@ -19,6 +20,7 @@ defmodule BitcoinExplorerWeb.SendLive do
       socket
       |> assign(:hero, "Send coins")
       |> refresh_utxos()
+      |> create_changeset()
     }
   end
 
@@ -56,6 +58,30 @@ defmodule BitcoinExplorerWeb.SendLive do
   end
 
   @impl true
+  def handle_event("validate", %{"send_bitcoin" => send_bitcoin}, socket) do
+    changeset = Changesets.SendBitcoin.validate(send_bitcoin)
+
+    {
+      :noreply,
+      socket
+      |> assign(:changeset, changeset)
+    }
+  end
+
+  @impl true
+  def handle_event("send", %{"send_bitcoin" => send_bitcoin}, socket) do
+    case Changesets.SendBitcoin.validate(send_bitcoin) do
+      %Ecto.Changeset{valid?: true, changes: %{amount: amount, fee: fee}} ->
+        send_bitcoin(amount, fee, socket |> get_selected_utxos)
+
+      %Ecto.Changeset{valid?: false, errors: errors} ->
+        IO.inspect(errors)
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info(_message, socket) do
     {
       :noreply,
@@ -64,11 +90,22 @@ defmodule BitcoinExplorerWeb.SendLive do
     }
   end
 
+  defp send_bitcoin(amount, fee, utxos) do
+    IO.inspect(utxos)
+  end
+
   defp refresh_utxos(socket) do
     socket
     |> get_utxos()
     |> calculate_balance()
     |> calculate_selected()
+  end
+
+  defp create_changeset(socket) do
+    changeset = Changesets.SendBitcoin.validate(%{})
+
+    socket
+    |> assign(:changeset, changeset)
   end
 
   ## need to get change? and index for the address derivation path
@@ -114,13 +151,17 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   defp calculate_selected(%{assigns: %{utxos: utxos}} = socket) do
     selected =
-      utxos
-      |> Enum.filter(&(&1.selected == true))
+      get_selected_utxos(socket)
       |> Enum.map(& &1.value)
       |> Enum.sum()
 
     socket
     |> assign(:selected, selected)
+  end
+
+  defp get_selected_utxos(socket) do
+    socket.assigns.utxos
+    |> Enum.filter(&(&1.selected == true))
   end
 
   defp toggle_utxo_selection(socket, txid, vout) do

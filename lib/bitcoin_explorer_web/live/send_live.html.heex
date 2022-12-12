@@ -6,4 +6,16 @@
   <.textbox title="amount" default_value="1000" />
 </div>
 
+<.form :let={f} for={@changeset} phx-change="validate" phx-submit="send">
+  <%= label(f, :amount) %>
+  <%= text_input(f, :amount) %>
+  <%= error_tag(f, :amount) %>
+
+  <%= label(f, :fee) %>
+  <%= text_input(f, :fee) %>
+  <%= error_tag(f, :fee) %>
+
+  <%= submit("send") %>
+</.form>
+
 <.utxo_list utxos={@utxos}></.utxo_list>
