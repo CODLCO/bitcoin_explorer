@@ -1,5 +1,22 @@
 <div class="m-2">Balance: <%= format_integer(@balance) %> sats</div>
 
+<form class="m-2">
+  <div class="grid gap-6 mb-6 md:grid-cols-2">
+    <div>
+      <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        Fee
+      </label>
+      <input
+        type="text"
+        id="fee"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="250"
+        required
+      />
+    </div>
+  </div>
+</form>
+
 <div class="m-2 grid grid-cols-6 w-fit font-data text-sm">
   <div class="mb-2 text-gray-500 col-span-2">transaction_id:vout</div>
   <div></div>
