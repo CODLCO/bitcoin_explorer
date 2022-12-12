@@ -6,6 +6,8 @@ defmodule BitcoinExplorerWeb.SendLive do
   alias BitcoinExplorer.Environment
   alias BitcoinExplorer.Wallet.Send
 
+  import BitcoinExplorerWeb.Components.Utxo
+
   @destination_address "myKgsxuFQQvYkVjqUfXJSzoqYcywsCA4VS"
 
   @impl true
@@ -59,12 +61,6 @@ defmodule BitcoinExplorerWeb.SendLive do
       socket
       |> assign(:utxos, get_utxos())
     }
-  end
-
-  defp encode(value) do
-    value
-    |> :erlang.term_to_binary()
-    |> Base.encode64()
   end
 
   defp decode(value) do
@@ -125,26 +121,6 @@ defmodule BitcoinExplorerWeb.SendLive do
     |> String.reverse()
   end
 
-  defp format_time(nil), do: "in mempool..."
-
-  defp format_time(time) do
-    time
-    |> DateTime.to_string()
-  end
-
-  defp add_time(utxo_list) do
-    utxo_list
-    |> Enum.map(fn utxo ->
-      transaction = ElectrumClient.get_transaction(utxo.transaction_id)
-
-      Map.put(utxo, :time, transaction.time)
-    end)
-  end
-
-  defp shorten_txid(txid, nb_chars) do
-    "#{String.slice(txid, 0, nb_chars)}...#{String.slice(txid, -nb_chars, nb_chars)}"
-  end
-
   defp toggle_utxo_selection(socket, txid, vout) do
     utxos = socket.assigns.utxos
 
@@ -158,5 +134,14 @@ defmodule BitcoinExplorerWeb.SendLive do
 
     socket
     |> assign(utxos: utxos)
+  end
+
+  defp add_time(utxo_list) do
+    utxo_list
+    |> Enum.map(fn utxo ->
+      transaction = ElectrumClient.get_transaction(utxo.transaction_id)
+
+      Map.put(utxo, :time, transaction.time)
+    end)
   end
 end

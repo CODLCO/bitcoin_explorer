@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -22,11 +22,14 @@
       href="https://fonts.googleapis.com/css2?family=Martian+Mono&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://unpkg.com/flowbite@1.5.5/dist/flowbite.min.css" />
   </head>
   <body class="bg-primary text-primary m-1">
     <header class="bg-header text-secondary p-2 mb-2 mt-2">
       <%= assigns[:hero] %>
     </header>
     <%= @inner_content %>
+    <script src="https://unpkg.com/flowbite@1.5.5/dist/flowbite.js">
+    </script>
   </body>
 </html>
