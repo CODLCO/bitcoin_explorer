@@ -6,7 +6,7 @@ defmodule BitcoinExplorerWeb.SendLive do
   alias BitcoinExplorer.Wallet.Send
   alias BitcoinExplorer.{Encoder, Environment, Formatter}
 
-  import BitcoinExplorerWeb.Components.Utxo
+  import BitcoinExplorerWeb.Components.UtxoList
 
   @destination_address "myKgsxuFQQvYkVjqUfXJSzoqYcywsCA4VS"
 
