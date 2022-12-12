@@ -13,7 +13,7 @@ defmodule BitcoinExplorerWeb.Components.Utxo do
     <div><%= format_time(@utxo.time) %></div>
     <div
       class="justify-self-end"
-      phx-click="toggle_@utxo"
+      phx-click="toggle_utxo"
       phx-value-txid={@utxo.transaction_id}
       phx-value-vout={@utxo.vxid}
     >
