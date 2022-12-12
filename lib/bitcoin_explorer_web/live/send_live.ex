@@ -18,7 +18,7 @@ defmodule BitcoinExplorerWeb.SendLive do
       :ok,
       socket
       |> assign(:hero, "Send coins")
-      |> refresh_utxos
+      |> refresh_utxos()
     }
   end
 
@@ -51,6 +51,7 @@ defmodule BitcoinExplorerWeb.SendLive do
       :noreply,
       socket
       |> toggle_utxo_selection(txid, vout)
+      |> calculate_selected()
     }
   end
 
@@ -59,27 +60,29 @@ defmodule BitcoinExplorerWeb.SendLive do
     {
       :noreply,
       socket
-      |> assign(:utxos, get_utxos())
+      |> get_utxos()
     }
   end
 
   defp refresh_utxos(socket) do
-    utxos = get_utxos()
-    balance = calculate_balance(utxos)
-
     socket
-    |> assign(:utxos, utxos)
-    |> assign(:balance, balance)
+    |> get_utxos()
+    |> calculate_balance()
+    |> calculate_selected()
   end
 
   ## need to get change? and index for the address derivation path
-  defp get_utxos() do
-    Environment.xpub()
-    |> BitcoinAccounting.get_utxos()
-    |> Enum.map(&extract_utxo/1)
-    |> Enum.concat()
-    |> Enum.sort(fn %{value: value1}, %{value: value2} -> value1 > value2 end)
-    |> add_time
+  defp get_utxos(socket) do
+    utxos =
+      Environment.xpub()
+      |> BitcoinAccounting.get_utxos()
+      |> Enum.map(&extract_utxo/1)
+      |> Enum.concat()
+      |> Enum.sort(fn %{value: value1}, %{value: value2} -> value1 > value2 end)
+      |> add_time
+
+    socket
+    |> assign(:utxos, utxos)
   end
 
   defp extract_utxo(
@@ -99,10 +102,25 @@ defmodule BitcoinExplorerWeb.SendLive do
     end)
   end
 
-  defp calculate_balance(utxos) do
-    utxos
-    |> Enum.map(& &1.value)
-    |> Enum.sum()
+  defp calculate_balance(%{assigns: %{utxos: utxos}} = socket) do
+    balance =
+      utxos
+      |> Enum.map(& &1.value)
+      |> Enum.sum()
+
+    socket
+    |> assign(:balance, balance)
+  end
+
+  defp calculate_selected(%{assigns: %{utxos: utxos}} = socket) do
+    selected =
+      utxos
+      |> Enum.filter(&(&1.selected == true))
+      |> Enum.map(& &1.value)
+      |> Enum.sum()
+
+    socket
+    |> assign(:selected, selected)
   end
 
   defp toggle_utxo_selection(socket, txid, vout) do
