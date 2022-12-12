@@ -2,8 +2,6 @@ defmodule BitcoinExplorerWeb.Components.Utxo do
   use BitcoinExplorerWeb, :component
 
   def utxo_list(assigns) do
-    IO.inspect(assigns |> Map.get(:utxos))
-
     ~H"""
     <div class="m-2 grid grid-cols-6 w-fit font-data text-sm">
       <div class="mb-2 text-gray-500 col-span-2">transaction_id:vout</div>
