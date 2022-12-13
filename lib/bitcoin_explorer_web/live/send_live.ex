@@ -4,7 +4,7 @@ defmodule BitcoinExplorerWeb.SendLive do
   require Logger
 
   alias BitcoinExplorer.Wallet.Send
-  alias BitcoinExplorer.{Encoder, Environment, Formatter}
+  alias BitcoinExplorer.{Encoder, Environment, Formatter, Utxo}
   alias BitcoinExplorer.Changesets
 
   import BitcoinExplorerWeb.Components.{Textbox, UtxoList}
@@ -70,13 +70,14 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   @impl true
   def handle_event("send", %{"send_bitcoin" => send_bitcoin}, socket) do
-    case Changesets.SendBitcoin.validate(send_bitcoin) do
-      %Ecto.Changeset{valid?: true, changes: %{amount: amount, fee: fee}} ->
-        send_bitcoin(amount, fee, socket |> get_selected_utxos)
+    socket =
+      case Changesets.SendBitcoin.validate(send_bitcoin) do
+        %Ecto.Changeset{valid?: true, changes: %{amount: amount, fee: fee}} ->
+          send_bitcoin(socket, amount, fee, @destination_address)
 
-      %Ecto.Changeset{valid?: false, errors: errors} ->
-        IO.inspect(errors)
-    end
+        %Ecto.Changeset{valid?: false, errors: errors} ->
+          socket |> put_flash(:error, "changeset: #{inspect(errors)}")
+      end
 
     {:noreply, socket}
   end
@@ -90,8 +91,24 @@ defmodule BitcoinExplorerWeb.SendLive do
     }
   end
 
-  defp send_bitcoin(amount, fee, utxos) do
-    IO.inspect(utxos)
+  defp send_bitcoin(socket, amount, fee, address) do
+    utxos = socket |> get_selected_utxos
+
+    case utxos do
+      [] ->
+        socket |> put_flash(:error, "no utxo selected")
+
+      _ ->
+        case Send.from_utxo_list(utxos, address) do
+          {:ok, txid} ->
+            socket
+            |> put_flash(:info, "Broadcasted #{txid}")
+            |> refresh_utxos()
+
+          {:error, message} ->
+            socket |> put_flash(:error, message)
+        end
+    end
   end
 
   defp refresh_utxos(socket) do
@@ -108,35 +125,13 @@ defmodule BitcoinExplorerWeb.SendLive do
     |> assign(:changeset, changeset)
   end
 
-  ## need to get change? and index for the address derivation path
   defp get_utxos(socket) do
     utxos =
       Environment.xpub()
-      |> BitcoinAccounting.get_utxos()
-      |> Enum.map(&extract_utxo/1)
-      |> Enum.concat()
-      |> Enum.sort(fn %{value: value1}, %{value: value2} -> value1 > value2 end)
-      |> add_time
+      |> Utxo.from_xpub()
 
     socket
     |> assign(:utxos, utxos)
-  end
-
-  defp extract_utxo(
-         {%BitcoinAccounting.XpubManager.AddressInfo{
-            address: address,
-            change?: change?,
-            index: index
-          }, utxo_list}
-       ) do
-    utxo_list
-    |> Enum.map(fn utxo ->
-      utxo
-      |> Map.put(:address, address)
-      |> Map.put(:change?, change?)
-      |> Map.put(:index, index)
-      |> Map.put(:selected, false)
-    end)
   end
 
   defp calculate_balance(%{assigns: %{utxos: utxos}} = socket) do
@@ -149,7 +144,7 @@ defmodule BitcoinExplorerWeb.SendLive do
     |> assign(:balance, balance)
   end
 
-  defp calculate_selected(%{assigns: %{utxos: utxos}} = socket) do
+  defp calculate_selected(socket) do
     selected =
       get_selected_utxos(socket)
       |> Enum.map(& &1.value)
@@ -177,14 +172,5 @@ defmodule BitcoinExplorerWeb.SendLive do
 
     socket
     |> assign(utxos: utxos)
-  end
-
-  defp add_time(utxo_list) do
-    utxo_list
-    |> Enum.map(fn utxo ->
-      transaction = ElectrumClient.get_transaction(utxo.transaction_id)
-
-      Map.put(utxo, :time, transaction.time)
-    end)
   end
 end

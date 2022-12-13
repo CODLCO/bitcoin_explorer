@@ -38,6 +38,13 @@ defmodule BitcoinExplorer.Wallet.Send do
     end
   end
 
+  ### only takes the first utxo for now, ignore the rest
+  def from_utxo_list(utxos, address) do
+    utxos
+    |> List.first()
+    |> from_utxo(address)
+  end
+
   defp get_private_key(change?, index) do
     seed_phrase = Environment.seed_phrase()
     xpub_derivation_path = Environment.xpub_derivation_path()
