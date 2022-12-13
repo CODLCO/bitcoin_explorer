@@ -9,6 +9,7 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   import BitcoinExplorerWeb.Components.{Textbox, UtxoList}
 
+  @default_fee 300
   @destination_address "myKgsxuFQQvYkVjqUfXJSzoqYcywsCA4VS"
 
   @impl true
@@ -29,7 +30,7 @@ defmodule BitcoinExplorerWeb.SendLive do
     utxo = Encoder.decode(encoded_utxo)
 
     socket =
-      case Send.from_utxo(utxo, @destination_address) do
+      case Send.from_utxo(utxo, @destination_address, @default_fee) do
         {:ok, txid} -> socket |> put_flash(:info, "Broadcasted #{txid}")
         {:error, message} -> socket |> put_flash(:error, message)
       end
@@ -99,7 +100,7 @@ defmodule BitcoinExplorerWeb.SendLive do
         socket |> put_flash(:error, "no utxo selected")
 
       _ ->
-        case Send.from_utxo_list(utxos, address) do
+        case Send.from_utxo_list(utxos, address, fee) do
           {:ok, txid} ->
             socket
             |> put_flash(:info, "Broadcasted #{txid}")

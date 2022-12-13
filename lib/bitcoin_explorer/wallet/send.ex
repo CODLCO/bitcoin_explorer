@@ -9,7 +9,8 @@ defmodule BitcoinExplorer.Wallet.Send do
   ### make sure tx and utxo amounts match
   def from_utxo_list(
         [%{transaction_id: txid, vxid: vxid, change?: change?, index: index} | _],
-        destination_address
+        destination_address,
+        fee
       ) do
     with {:ok, private_key} <- get_private_key(change?, index) do
       vout = get_vout(txid, vxid)
@@ -17,7 +18,6 @@ defmodule BitcoinExplorer.Wallet.Send do
       destination_public_hash = get_destination_public_hash(destination_address)
 
       original_amount = vout.value
-      fee = 500
       destination_amount = original_amount - fee
 
       %Transaction.Spec{}
@@ -38,9 +38,9 @@ defmodule BitcoinExplorer.Wallet.Send do
     end
   end
 
-  def from_utxo(utxo, address) do
+  def from_utxo(utxo, address, fee) do
     [utxo]
-    |> from_utxo_list(address)
+    |> from_utxo_list(address, fee)
   end
 
   defp get_private_key(change?, index) do
