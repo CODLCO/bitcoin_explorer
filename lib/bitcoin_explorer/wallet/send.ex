@@ -14,15 +14,13 @@ defmodule BitcoinExplorer.Wallet.Send do
       ) do
     with {:ok, private_key} <- get_private_key(change?, index) do
       vout = get_vout(txid, vxid)
-      script_pub_key = get_script_pub_key(vout)
-      destination_public_hash = get_destination_public_hash(destination_address)
-
       original_amount = vout.value
+
       destination_amount = original_amount - fee
 
       %Transaction.Spec{}
-      |> add_input(txid, vxid, script_pub_key)
-      |> add_output(destination_public_hash, destination_amount)
+      |> add_input(txid, vxid, vout)
+      |> add_output(destination_address, destination_amount)
       |> Transaction.Spec.sign_and_encode(private_key)
       |> ElectrumClient.broadcast_transaction()
     else
@@ -35,7 +33,9 @@ defmodule BitcoinExplorer.Wallet.Send do
     |> from_utxo_list(address, fee)
   end
 
-  defp add_input(spec, txid, vxid, script_pub_key) do
+  defp add_input(spec, txid, vxid, vout) do
+    script_pub_key = get_script_pub_key(vout)
+
     spec
     |> Transaction.Spec.add_input!(
       txid: txid,
@@ -44,7 +44,9 @@ defmodule BitcoinExplorer.Wallet.Send do
     )
   end
 
-  defp add_output(spec, public_key_hash, amount) do
+  defp add_output(spec, address, amount) do
+    public_key_hash = get_destination_public_hash(address)
+
     spec
     |> Transaction.Spec.add_output(
       public_key_hash
