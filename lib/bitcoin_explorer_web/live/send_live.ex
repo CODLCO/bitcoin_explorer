@@ -92,7 +92,7 @@ defmodule BitcoinExplorerWeb.SendLive do
     }
   end
 
-  defp send_bitcoin(socket, amount, fee, address) do
+  defp send_bitcoin(socket, _amount, fee, address) do
     utxos = socket |> get_selected_utxos
 
     case utxos do
