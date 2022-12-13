@@ -7,8 +7,8 @@ defmodule BitcoinExplorer.Wallet.Send do
 
   ### design those structs: from (for input), to (for output)
   ### make sure tx and utxo amounts match
-  def from_utxo(
-        %{transaction_id: txid, vxid: vxid, change?: change?, index: index},
+  def from_utxo_list(
+        [%{transaction_id: txid, vxid: vxid, change?: change?, index: index} | _],
         destination_address
       ) do
     with {:ok, private_key} <- get_private_key(change?, index) do
@@ -38,11 +38,9 @@ defmodule BitcoinExplorer.Wallet.Send do
     end
   end
 
-  ### only takes the first utxo for now, ignore the rest
-  def from_utxo_list(utxos, address) do
-    utxos
-    |> List.first()
-    |> from_utxo(address)
+  def from_utxo(utxo, address) do
+    [utxo]
+    |> from_utxo_list(address)
   end
 
   defp get_private_key(change?, index) do
