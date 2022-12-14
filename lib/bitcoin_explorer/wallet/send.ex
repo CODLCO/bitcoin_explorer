@@ -12,16 +12,18 @@ defmodule BitcoinExplorer.Wallet.Send do
         destination_address,
         fee
       ) do
-    with {:ok, private_key} <- get_private_key(change?, index) do
-      vout = get_vout(txid, vxid)
-      original_amount = vout.value
+    vout = get_vout(txid, vxid)
+    original_amount = vout.value
 
-      destination_amount = original_amount - fee
+    destination_amount = original_amount - fee
 
-      %Transaction.Spec{}
-      |> add_input(txid, vxid, vout)
-      |> add_output(destination_address, destination_amount)
-      |> Transaction.Spec.sign_and_encode(private_key)
+    with {:ok, private_key} <- get_private_key(change?, index),
+         {:ok, signed_transaction} <-
+           %Transaction.Spec{}
+           |> add_input(txid, vxid, vout)
+           |> add_output(destination_address, destination_amount)
+           |> Transaction.Spec.sign_and_encode([private_key]) do
+      signed_transaction
       |> ElectrumClient.broadcast_transaction()
     else
       {:error, message} -> {:error, message}
