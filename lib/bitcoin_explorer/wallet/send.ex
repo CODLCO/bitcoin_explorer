@@ -8,13 +8,14 @@ defmodule BitcoinExplorer.Wallet.Send do
   ### design those structs: from (for input), to (for output)
   ### make sure tx and utxo amounts match
   def from_utxo_list(utxos, destination_address, destination_amount) do
-    [utxo1 | _] = utxos
+    spec =
+      %Transaction.Spec{}
+      |> add_inputs(utxos)
 
     with {:ok, private_keys} <- get_private_keys(utxos),
          #         {:ok, inputs <- get_inputs(utxos)},
          {:ok, signed_transaction} <-
-           %Transaction.Spec{}
-           |> add_input(utxo1)
+           spec
            |> add_output(destination_address, destination_amount)
            |> Transaction.Spec.sign_and_encode(private_keys) do
       signed_transaction
@@ -27,6 +28,13 @@ defmodule BitcoinExplorer.Wallet.Send do
   def from_utxo(utxo, address, fee) do
     [utxo]
     |> from_utxo_list(address, fee)
+  end
+
+  defp add_inputs(spec, utxos) do
+    utxos
+    |> Enum.reduce(spec, fn utxo, spec ->
+      add_input(spec, utxo)
+    end)
   end
 
   defp add_input(spec, %{transaction_id: txid, vxid: vxid} = _utxo) do

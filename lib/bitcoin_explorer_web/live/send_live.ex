@@ -9,7 +9,7 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   import BitcoinExplorerWeb.Components.{UtxoList}
 
-  @default_fee 200
+  @default_fee 340
   @destination_address "myKgsxuFQQvYkVjqUfXJSzoqYcywsCA4VS"
 
   @impl true
