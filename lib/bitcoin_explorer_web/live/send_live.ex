@@ -7,9 +7,9 @@ defmodule BitcoinExplorerWeb.SendLive do
   alias BitcoinExplorer.{Encoder, Environment, Formatter, Utxo}
   alias BitcoinExplorer.Changesets
 
-  import BitcoinExplorerWeb.Components.{Textbox, UtxoList}
+  import BitcoinExplorerWeb.Components.{UtxoList}
 
-  @default_fee 300
+  @default_fee 200
   @destination_address "myKgsxuFQQvYkVjqUfXJSzoqYcywsCA4VS"
 
   @impl true
@@ -20,6 +20,7 @@ defmodule BitcoinExplorerWeb.SendLive do
       :ok,
       socket
       |> assign(:hero, "Send coins")
+      |> assign(:fee, @default_fee)
       |> refresh_utxos()
       |> create_changeset()
     }
@@ -55,6 +56,7 @@ defmodule BitcoinExplorerWeb.SendLive do
       socket
       |> toggle_utxo_selection(txid, vout)
       |> calculate_selected()
+      |> calculate_amount()
     }
   end
 
@@ -70,18 +72,27 @@ defmodule BitcoinExplorerWeb.SendLive do
   end
 
   @impl true
-  def handle_event("send", %{"send_bitcoin" => send_bitcoin}, socket) do
+  def handle_event("send", _data, socket) do
     socket =
-      case Changesets.SendBitcoin.validate(send_bitcoin) do
-        %Ecto.Changeset{valid?: true, changes: %{amount: amount, fee: fee}} ->
-          send_bitcoin(socket, amount, fee, @destination_address)
-
-        %Ecto.Changeset{valid?: false, errors: errors} ->
-          socket |> put_flash(:error, "changeset: #{inspect(errors)}")
-      end
+      socket
+      |> send_bitcoin(socket.assigns.amount, @destination_address)
 
     {:noreply, socket}
   end
+
+  # @impl true
+  # def handle_event("send", %{"send_bitcoin" => send_bitcoin}, socket) do
+  #   socket =
+  #     case Changesets.SendBitcoin.validate(send_bitcoin) do
+  #       %Ecto.Changeset{valid?: true, changes: %{amount: amount}} ->
+  #         send_bitcoin(socket, amount, @destination_address)
+
+  #       %Ecto.Changeset{valid?: false, errors: errors} ->
+  #         socket |> put_flash(:error, "changeset: #{inspect(errors)}")
+  #     end
+
+  #   {:noreply, socket}
+  # end
 
   @impl true
   def handle_info(_message, socket) do
@@ -92,7 +103,7 @@ defmodule BitcoinExplorerWeb.SendLive do
     }
   end
 
-  defp send_bitcoin(socket, _amount, fee, address) do
+  defp send_bitcoin(socket, amount, address) do
     utxos = socket |> get_selected_utxos
 
     case utxos do
@@ -100,7 +111,7 @@ defmodule BitcoinExplorerWeb.SendLive do
         socket |> put_flash(:error, "no utxo selected")
 
       _ ->
-        case Send.from_utxo_list(utxos, address, fee) do
+        case Send.from_utxo_list(utxos, address, amount) do
           {:ok, txid} ->
             socket
             |> put_flash(:info, "Broadcasted #{txid}")
@@ -117,6 +128,7 @@ defmodule BitcoinExplorerWeb.SendLive do
     |> get_utxos()
     |> calculate_balance()
     |> calculate_selected()
+    |> calculate_amount()
   end
 
   defp create_changeset(socket) do
@@ -124,6 +136,15 @@ defmodule BitcoinExplorerWeb.SendLive do
 
     socket
     |> assign(:changeset, changeset)
+  end
+
+  defp change_amount(socket, amount) do
+    new_changeset =
+      socket.assigns.changeset
+      |> Ecto.Changeset.put_change(:amount, amount)
+
+    socket
+    |> assign(new_changeset)
   end
 
   defp get_utxos(socket) do
@@ -153,6 +174,13 @@ defmodule BitcoinExplorerWeb.SendLive do
 
     socket
     |> assign(:selected, selected)
+  end
+
+  defp calculate_amount(socket) do
+    amount = socket.assigns.selected - socket.assigns.fee
+
+    socket
+    |> assign(:amount, amount)
   end
 
   defp get_selected_utxos(socket) do

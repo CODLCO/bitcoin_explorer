@@ -1,21 +1,16 @@
 <div class="m-2">Balance: <%= Formatter.integer(@balance) %> sats</div>
 <div class="m-2">Selected: <%= Formatter.integer(@selected) %> sats</div>
+<div class="m-2">Amount: <%= Formatter.integer(@amount) %> sats</div>
+<div class="m-2">Fee: <%= @fee %> sats</div>
 
-<div class="mt-6">
-  <.textbox title="fee" default_value="250" />
-  <.textbox title="amount" default_value="1000" />
-</div>
-
-<.form :let={f} for={@changeset} phx-change="validate" phx-submit="send">
+<%!-- <.form :let={f} for={@changeset} phx-change="validate" phx-submit="send">
   <%= label(f, :amount) %>
   <%= text_input(f, :amount) %>
   <%= error_tag(f, :amount) %>
 
-  <%= label(f, :fee) %>
-  <%= text_input(f, :fee) %>
-  <%= error_tag(f, :fee) %>
-
   <%= submit("send") %>
-</.form>
+</.form> --%>
+
+<div phx-click="send">send</div>
 
 <.utxo_list utxos={@utxos}></.utxo_list>
