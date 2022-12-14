@@ -7,22 +7,20 @@ defmodule BitcoinExplorer.Wallet.Send do
 
   ### design those structs: from (for input), to (for output)
   ### make sure tx and utxo amounts match
-  def from_utxo_list(
-        [%{transaction_id: txid, vxid: vxid, change?: change?, index: index} | _],
-        destination_address,
-        fee
-      ) do
+  def from_utxo_list(utxos, destination_address, fee) do
+    [%{transaction_id: txid, vxid: vxid} | _] = utxos
+
     vout = get_vout(txid, vxid)
     original_amount = vout.value
 
     destination_amount = original_amount - fee
 
-    with {:ok, private_key} <- get_private_key(change?, index),
+    with {:ok, private_keys} <- get_private_keys(utxos),
          {:ok, signed_transaction} <-
            %Transaction.Spec{}
            |> add_input(txid, vxid, vout)
            |> add_output(destination_address, destination_amount)
-           |> Transaction.Spec.sign_and_encode([private_key]) do
+           |> Transaction.Spec.sign_and_encode(private_keys) do
       signed_transaction
       |> ElectrumClient.broadcast_transaction()
     else
@@ -55,6 +53,30 @@ defmodule BitcoinExplorer.Wallet.Send do
       |> Script.Types.P2pkh.create(),
       amount
     )
+  end
+
+  defp get_private_keys(utxos) do
+    utxos
+    |> Enum.map(fn %{change?: change?, index: index} ->
+      get_private_key(change?, index)
+    end)
+    |> validate_private_keys()
+  end
+
+  defp validate_private_keys(private_key_results) do
+    error_messages =
+      private_key_results
+      |> Enum.reduce([], fn result, error_messages ->
+        case result do
+          {:error, message} -> [message | error_messages]
+          _ -> error_messages
+        end
+      end)
+
+    case Enum.any?(error_messages) do
+      true -> {:error, Enum.join(error_messages)}
+      false -> {:ok, private_key_results |> Enum.map(fn {:ok, private_key} -> private_key end)}
+    end
   end
 
   defp get_private_key(change?, index) do
