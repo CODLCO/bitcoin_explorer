@@ -5,15 +5,12 @@ defmodule BitcoinExplorer.Wallet.Send do
   alias BitcoinLib.Address
   alias BitcoinLib.Key.{PrivateKey}
 
-  ### design those structs: from (for input), to (for output)
-  ### make sure tx and utxo amounts match
   def from_utxo_list(utxos, destination_address, destination_amount) do
     spec =
       %Transaction.Spec{}
       |> add_inputs(utxos)
 
     with {:ok, private_keys} <- get_private_keys(utxos),
-         #         {:ok, inputs <- get_inputs(utxos)},
          {:ok, signed_transaction} <-
            spec
            |> add_output(destination_address, destination_amount)
