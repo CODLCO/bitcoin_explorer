@@ -23,14 +23,7 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
   def render(assigns) do
     ~H"""
     <div class="w-full">
-      <.form
-        :let={f}
-        as={:address}
-        for={@changeset}
-        phx-change="validate"
-        phx-submit="send"
-        phx-target={@myself}
-      >
+      <.form :let={f} as={:address} for={@changeset} phx-change="validate" phx-target={@myself}>
         <%= label(f, :address) %>
         <%= text_input(f, :address, class: "w-[26rem]", autocomplete: "off") %>
         <%= error_tag(f, :address) %>
@@ -40,22 +33,10 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
   end
 
   @impl true
-  def update(_params, socket) do
-    {:ok, socket}
-  end
+  def handle_event("validate", %{"address" => %{"address" => address} = form}, socket) do
+    %{assigns: %{changeset: changeset}} = validate(socket, form)
 
-  @impl true
-  def handle_event("validate", %{"address" => form}, socket) do
-    {
-      :noreply,
-      socket
-      |> validate(form)
-    }
-  end
-
-  @impl true
-  def handle_event("send", _data, socket) do
-    IO.inspect("SEND FROM SENDLIVE.FORM")
+    send(self(), {:address_updated, changeset.valid?, address})
 
     {
       :noreply,
@@ -64,9 +45,13 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
   end
 
   defp validate(socket, form) do
-    changeset = FormData.validate(form) |> IO.inspect()
+    changeset = FormData.validate(form)
 
     socket
     |> assign(changeset: changeset)
+  end
+
+  defp get_address(%{assigns: %{changeset: changeset}} = socket) do
+    changeset.changes.address
   end
 end

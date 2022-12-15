@@ -11,6 +11,7 @@ defmodule BitcoinExplorerWeb.SendLive do
   import BitcoinExplorerWeb.Components.UtxoList
 
   @default_fee 340
+  @default_address {false, ""}
   @destination_address "myKgsxuFQQvYkVjqUfXJSzoqYcywsCA4VS"
 
   @impl true
@@ -22,6 +23,7 @@ defmodule BitcoinExplorerWeb.SendLive do
       socket
       |> assign(:hero, "Send coins")
       |> assign(:fee, @default_fee)
+      |> assign(:address, @default_address)
       |> refresh_utxos()
       |> create_changeset()
     }
@@ -61,18 +63,18 @@ defmodule BitcoinExplorerWeb.SendLive do
     }
   end
 
-  @impl true
-  def handle_event("validate", %{"send_bitcoin" => send_bitcoin}, socket) do
-    changeset =
-      Changesets.SendBitcoin.validate(send_bitcoin)
-      |> IO.inspect(label: "changeset validatin")
+  # @impl true
+  # def handle_event("validate", %{"send_bitcoin" => send_bitcoin}, socket) do
+  #   changeset =
+  #     Changesets.SendBitcoin.validate(send_bitcoin)
+  #     |> IO.inspect(label: "changeset validatin")
 
-    {
-      :noreply,
-      socket
-      |> assign(:changeset, changeset)
-    }
-  end
+  #   {
+  #     :noreply,
+  #     socket
+  #     |> assign(:changeset, changeset)
+  #   }
+  # end
 
   @impl true
   def handle_event("send", _data, socket) do
@@ -81,7 +83,7 @@ defmodule BitcoinExplorerWeb.SendLive do
         socket
         |> send_bitcoin(socket.assigns.amount, @destination_address)
       else
-        validations = Enum.join(get_validations(socket)) |> IO.inspect()
+        validations = Enum.join(get_validations(socket))
 
         socket
         |> put_flash(:error, validations)
@@ -103,6 +105,15 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   #   {:noreply, socket}
   # end
+
+  @impl true
+  def handle_info({:address_updated, valid?, address}, socket) do
+    {
+      :noreply,
+      socket
+      |> assign(:address, {valid?, address})
+    }
+  end
 
   @impl true
   def handle_info(_message, socket) do
@@ -151,14 +162,14 @@ defmodule BitcoinExplorerWeb.SendLive do
     |> assign(:changeset, changeset)
   end
 
-  defp change_amount(socket, amount) do
-    new_changeset =
-      socket.assigns.changeset
-      |> Ecto.Changeset.put_change(:amount, amount)
+  # defp change_amount(socket, amount) do
+  #   new_changeset =
+  #     socket.assigns.changeset
+  #     |> Ecto.Changeset.put_change(:amount, amount)
 
-    socket
-    |> assign(new_changeset)
-  end
+  #   socket
+  #   |> assign(new_changeset)
+  # end
 
   defp get_utxos(socket) do
     utxos =
