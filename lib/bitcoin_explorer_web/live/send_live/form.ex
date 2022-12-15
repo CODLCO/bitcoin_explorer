@@ -22,7 +22,7 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="w-full">
       <.form
         :let={f}
         as={:address}
@@ -32,7 +32,7 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
         phx-target={@myself}
       >
         <%= label(f, :address) %>
-        <%= text_input(f, :address) %>
+        <%= text_input(f, :address, class: "w-[26rem]", autocomplete: "off") %>
         <%= error_tag(f, :address) %>
       </.form>
     </div>
