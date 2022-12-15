@@ -3,11 +3,12 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   require Logger
 
+  alias BitcoinExplorerWeb.SendLive.Form
   alias BitcoinExplorer.Wallet.Send
   alias BitcoinExplorer.{Encoder, Environment, Formatter, Utxo}
   alias BitcoinExplorer.Changesets
 
-  import BitcoinExplorerWeb.Components.{UtxoList}
+  import BitcoinExplorerWeb.Components.UtxoList
 
   @default_fee 340
   @destination_address "myKgsxuFQQvYkVjqUfXJSzoqYcywsCA4VS"
@@ -62,7 +63,9 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   @impl true
   def handle_event("validate", %{"send_bitcoin" => send_bitcoin}, socket) do
-    changeset = Changesets.SendBitcoin.validate(send_bitcoin)
+    changeset =
+      Changesets.SendBitcoin.validate(send_bitcoin)
+      |> IO.inspect(label: "changeset validatin")
 
     {
       :noreply,
@@ -74,8 +77,15 @@ defmodule BitcoinExplorerWeb.SendLive do
   @impl true
   def handle_event("send", _data, socket) do
     socket =
-      socket
-      |> send_bitcoin(socket.assigns.amount, @destination_address)
+      if is_changeset_valid?(socket) do
+        socket
+        |> send_bitcoin(socket.assigns.amount, @destination_address)
+      else
+        validations = Enum.join(get_validations(socket)) |> IO.inspect()
+
+        socket
+        |> put_flash(:error, validations)
+      end
 
     {:noreply, socket}
   end
@@ -102,6 +112,9 @@ defmodule BitcoinExplorerWeb.SendLive do
       |> get_utxos()
     }
   end
+
+  defp is_changeset_valid?(%{assigns: %{changeset: changeset}}), do: changeset.valid?
+  defp get_validations(%{assigns: %{changeset: changeset}}), do: changeset.validations
 
   defp send_bitcoin(socket, amount, address) do
     utxos = socket |> get_selected_utxos

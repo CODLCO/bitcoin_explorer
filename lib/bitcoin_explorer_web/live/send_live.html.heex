@@ -3,14 +3,6 @@
 <div class="m-2">Amount: <%= Formatter.integer(@amount) %> sats</div>
 <div class="m-2">Fee: <%= @fee %> sats</div>
 
-<%!-- <.form :let={f} for={@changeset} phx-change="validate" phx-submit="send">
-  <%= label(f, :amount) %>
-  <%= text_input(f, :amount) %>
-  <%= error_tag(f, :amount) %>
-
-  <%= submit("send") %>
-</.form> --%>
-
-<div phx-click="send">send</div>
+<.live_component module={Form} id="form" content={@amount} />
 
 <.utxo_list utxos={@utxos}></.utxo_list>
