@@ -77,16 +77,14 @@ defmodule BitcoinExplorerWeb.SendLive do
   # end
 
   @impl true
-  def handle_event("send", _data, socket) do
+  def handle_event("send", _data, %{assigns: %{address: {_, address}}} = socket) do
     socket =
-      if is_changeset_valid?(socket) do
+      if is_address_valid?(socket) && utxo_selected?(socket) do
         socket
-        |> send_bitcoin(socket.assigns.amount, @destination_address)
+        |> send_bitcoin(socket.assigns.amount, address)
       else
-        validations = Enum.join(get_validations(socket))
-
         socket
-        |> put_flash(:error, validations)
+        |> put_flash(:error, "error")
       end
 
     {:noreply, socket}
@@ -124,8 +122,8 @@ defmodule BitcoinExplorerWeb.SendLive do
     }
   end
 
-  defp is_changeset_valid?(%{assigns: %{changeset: changeset}}), do: changeset.valid?
-  defp get_validations(%{assigns: %{changeset: changeset}}), do: changeset.validations
+  defp is_address_valid?(%{assigns: %{address: {valid?, _}}}), do: valid?
+  defp utxo_selected?(%{assigns: %{changeset: changeset}}), do: changeset.valid?()
 
   defp send_bitcoin(socket, amount, address) do
     utxos = socket |> get_selected_utxos
