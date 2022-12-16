@@ -79,12 +79,12 @@ defmodule BitcoinExplorerWeb.SendLive do
   @impl true
   def handle_event("send", _data, %{assigns: %{address: {_, address}}} = socket) do
     socket =
-      if is_address_valid?(socket) && utxo_selected?(socket) do
+      with {:ok, _} <- validate_address(socket),
+           {:ok, _} <- validate_utxos(socket) do
         socket
-        |> send_bitcoin(socket.assigns.amount, address)
+        |> send_bitcoin(socket.assigns.amount)
       else
-        socket
-        |> put_flash(:error, "error")
+        {:error, message} -> socket |> put_flash(:error, message)
       end
 
     {:noreply, socket}
@@ -122,10 +122,17 @@ defmodule BitcoinExplorerWeb.SendLive do
     }
   end
 
-  defp is_address_valid?(%{assigns: %{address: {valid?, _}}}), do: valid?
-  defp utxo_selected?(%{assigns: %{changeset: changeset}}), do: changeset.valid?()
+  defp validate_address(%{assigns: %{address: {true, address}}}), do: {:ok, address}
+  defp validate_address(%{assigns: %{address: {false, _}}}), do: {:error, "address is missing"}
 
-  defp send_bitcoin(socket, amount, address) do
+  defp validate_utxos(%{assigns: %{changeset: changeset, utxos: utxos}}) do
+    case changeset.valid?() do
+      true -> {:ok, utxos}
+      false -> {:error, "utxos are missing"}
+    end
+  end
+
+  defp send_bitcoin(%{assigns: %{address: {_, address}}} = socket, amount) do
     utxos = socket |> get_selected_utxos
 
     case utxos do
