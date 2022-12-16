@@ -15,7 +15,6 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
       :ok,
       socket
       |> validate(%{addresses: ["", ""]})
-      |> assign(:form_data, %{address: ""})
     }
   end
 
