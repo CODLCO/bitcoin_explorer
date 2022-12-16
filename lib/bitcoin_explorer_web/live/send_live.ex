@@ -11,7 +11,7 @@ defmodule BitcoinExplorerWeb.SendLive do
   import BitcoinExplorerWeb.Components.UtxoList
 
   @default_fee 340
-  @default_address {false, ""}
+  @default_addresses {false, [""]}
   @destination_address "myKgsxuFQQvYkVjqUfXJSzoqYcywsCA4VS"
 
   @impl true
@@ -23,7 +23,7 @@ defmodule BitcoinExplorerWeb.SendLive do
       socket
       |> assign(:hero, "Send coins")
       |> assign(:fee, @default_fee)
-      |> assign(:address, @default_address)
+      |> assign(:addresses, @default_address)
       |> refresh_utxos()
       |> create_changeset()
     }
@@ -79,7 +79,7 @@ defmodule BitcoinExplorerWeb.SendLive do
   @impl true
   def handle_event("send", _data, socket) do
     socket =
-      with {:ok, _} <- validate_address(socket),
+      with {:ok, _} <- validate_addresses(socket),
            {:ok, _} <- validate_utxos(socket) do
         socket
         |> send_bitcoin(socket.assigns.amount)
@@ -105,11 +105,11 @@ defmodule BitcoinExplorerWeb.SendLive do
   # end
 
   @impl true
-  def handle_info({:address_updated, valid?, address}, socket) do
+  def handle_info({:address_updated, valid?, addresses}, socket) do
     {
       :noreply,
       socket
-      |> assign(:address, {valid?, address})
+      |> assign(:addresses, {valid?, addresses})
     }
   end
 
@@ -122,8 +122,10 @@ defmodule BitcoinExplorerWeb.SendLive do
     }
   end
 
-  defp validate_address(%{assigns: %{address: {true, address}}}), do: {:ok, address}
-  defp validate_address(%{assigns: %{address: {false, _}}}), do: {:error, "address is missing"}
+  defp validate_addresses(%{assigns: %{addresses: {true, addresses}}}), do: {:ok, addresses}
+
+  defp validate_addresses(%{assigns: %{addresses: {false, _}}}),
+    do: {:error, "address is missing"}
 
   defp validate_utxos(%{assigns: %{changeset: changeset, utxos: utxos}}) do
     case changeset.valid?() do
@@ -132,7 +134,7 @@ defmodule BitcoinExplorerWeb.SendLive do
     end
   end
 
-  defp send_bitcoin(%{assigns: %{address: {_, address}}} = socket, amount) do
+  defp send_bitcoin(%{assigns: %{addresses: {_, addresses}}} = socket, amount) do
     utxos = socket |> get_selected_utxos
 
     case utxos do
@@ -140,7 +142,7 @@ defmodule BitcoinExplorerWeb.SendLive do
         socket |> put_flash(:error, "no utxo selected")
 
       _ ->
-        case Send.from_utxo_list(utxos, address, amount) do
+        case Send.from_utxo_list(utxos, addresses, amount) do
           {:ok, txid} ->
             socket
             |> put_flash(:info, "Broadcasted #{txid}")

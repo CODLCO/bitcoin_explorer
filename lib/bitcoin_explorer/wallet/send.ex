@@ -5,7 +5,7 @@ defmodule BitcoinExplorer.Wallet.Send do
   alias BitcoinLib.Address
   alias BitcoinLib.Key.{PrivateKey}
 
-  def from_utxo_list(utxos, destination_address, destination_amount) do
+  def from_utxo_list(utxos, [destination_address], destination_amount) do
     spec =
       %Transaction.Spec{}
       |> add_inputs(utxos)

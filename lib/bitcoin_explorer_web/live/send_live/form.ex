@@ -23,20 +23,23 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
   def render(assigns) do
     ~H"""
     <div class="w-full">
-      <.form :let={f} as={:address} for={@changeset} phx-change="validate" phx-target={@myself}>
-        <%= label(f, :address) %>
-        <%= address_input(f, :address) %>
-        <%= error_tag(f, :address) %>
+      <.form :let={f} as={:address_list} for={@changeset} phx-change="validate" phx-target={@myself}>
+        <%= label(f, :addresses) %>
+        <%= address_list(f, :addresses) %>
+        <%= error_tag(f, :addresses) %>
       </.form>
     </div>
     """
   end
 
   @impl true
-  def handle_event("validate", %{"address" => %{"address" => address} = form}, socket) do
+  def handle_event("validate", %{"address_list" => %{"addresses" => addresses} = form}, socket) do
     %{assigns: %{changeset: changeset}} = validate(socket, form)
 
-    send(self(), {:address_updated, changeset.valid?, address})
+    IO.inspect(addresses)
+    IO.inspect(changeset)
+
+    send(self(), {:address_updated, changeset.valid?, addresses})
 
     {
       :noreply,
