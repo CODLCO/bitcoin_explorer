@@ -14,7 +14,8 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
     {
       :ok,
       socket
-      |> validate(%{addresses: ["", ""]})
+      |> validate(%{addresses: []})
+      |> add_address("")
     }
   end
 
@@ -22,6 +23,7 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
   def render(assigns) do
     ~H"""
     <div class="w-full">
+      <button phx-click="add" phx-target={@myself}>Add an address</button>
       <.form :let={f} as={:address_list} for={@changeset} phx-change="validate" phx-target={@myself}>
         <%= label(f, :addresses) %>
         <%= address_list(f, :addresses) %>
@@ -43,10 +45,28 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
     }
   end
 
+  @impl true
+  def handle_event("add", _, socket) do
+    addresses = socket.assigns.changeset.changes.addresses ++ [""]
+
+    {
+      :noreply,
+      socket
+      |> validate(%{addresses: addresses})
+    }
+  end
+
   defp validate(socket, form) do
     changeset = FormData.validate(form)
 
     socket
     |> assign(changeset: changeset)
+  end
+
+  defp add_address(socket, address) do
+    addresses = socket.assigns.changeset.changes.addresses ++ [address]
+
+    socket
+    |> validate(%{addresses: addresses})
   end
 end
