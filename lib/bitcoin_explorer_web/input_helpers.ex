@@ -1,4 +1,11 @@
 defmodule BitcoinExplorerWeb.InputHelpers do
+  @moduledoc """
+  Based on the learnings from:
+    Form inputs for lists as array ecto types in Phoenix https://www.youtube.com/watch?v=kg7q7O4RmQQ
+
+  Next thing to learn:
+    Very customized form helpers https://www.youtube.com/watch?v=2Zr9bvphA2o&t=4s
+  """
   use Phoenix.HTML
 
   alias Phoenix.HTML.Form
