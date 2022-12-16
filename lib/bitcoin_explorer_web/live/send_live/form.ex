@@ -14,7 +14,7 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
     {
       :ok,
       socket
-      |> validate(%{})
+      |> validate(%{addresses: ["", ""]})
       |> assign(:form_data, %{address: ""})
     }
   end
@@ -35,9 +35,6 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
   @impl true
   def handle_event("validate", %{"address_list" => %{"addresses" => addresses} = form}, socket) do
     %{assigns: %{changeset: changeset}} = validate(socket, form)
-
-    IO.inspect(addresses)
-    IO.inspect(changeset)
 
     send(self(), {:address_updated, changeset.valid?, addresses})
 
