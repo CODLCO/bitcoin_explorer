@@ -25,7 +25,7 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
     <div class="w-full">
       <.form :let={f} as={:address} for={@changeset} phx-change="validate" phx-target={@myself}>
         <%= label(f, :address) %>
-        <%= text_input(f, :address, class: "w-[26rem]", autocomplete: "off") %>
+        <%= address_input(f, :address) %>
         <%= error_tag(f, :address) %>
       </.form>
     </div>

@@ -59,6 +59,8 @@ defmodule BitcoinExplorerWeb do
     quote do
       use Phoenix.LiveComponent
 
+      import BitcoinExplorerWeb.InputHelpers
+
       unquote(view_helpers())
     end
   end
