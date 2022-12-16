@@ -77,7 +77,7 @@ defmodule BitcoinExplorerWeb.SendLive do
   # end
 
   @impl true
-  def handle_event("send", _data, %{assigns: %{address: {_, address}}} = socket) do
+  def handle_event("send", _data, socket) do
     socket =
       with {:ok, _} <- validate_address(socket),
            {:ok, _} <- validate_utxos(socket) do

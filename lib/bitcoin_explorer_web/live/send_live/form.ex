@@ -50,8 +50,4 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
     socket
     |> assign(changeset: changeset)
   end
-
-  defp get_address(%{assigns: %{changeset: changeset}} = socket) do
-    changeset.changes.address
-  end
 end
