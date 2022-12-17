@@ -15,7 +15,7 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
       :ok,
       socket
       |> validate(%{addresses: []})
-      |> add_address("")
+      |> add_address("mgJ6YsnKxbDvR2aiwFreu2hEgyR7bxcwrr")
     }
   end
 
@@ -56,6 +56,17 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
     }
   end
 
+  @impl true
+  def handle_event("remove_address", %{"index" => index}, socket) do
+    IO.inspect(index, label: "remove address from form")
+
+    {
+      :noreply,
+      socket
+      #      |> remove_address_at(index)
+    }
+  end
+
   defp validate(socket, form) do
     changeset = FormData.validate(form)
 
@@ -63,10 +74,15 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
     |> assign(changeset: changeset)
   end
 
+  defp get_addresses(socket) do
+    socket.assigns.changeset.changes.addresses
+  end
+
   defp add_address(socket, address) do
-    addresses = socket.assigns.changeset.changes.addresses ++ [address]
+    addresses = get_addresses(socket) ++ [address]
 
     socket
     |> validate(%{addresses: addresses})
+    |> assign(addresses: addresses)
   end
 end
