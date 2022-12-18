@@ -26,7 +26,9 @@
   </head>
   <body class="bg-primary text-primary m-1">
     <header class="bg-header text-secondary p-2 mb-2 mt-2">
-      <%= assigns[:hero] %>
+      <div class="pl-4 inline-block text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+        <%= assigns[:hero] %>
+      </div>
     </header>
     <%= @inner_content %>
     <script src="https://unpkg.com/flowbite@1.5.5/dist/flowbite.js">

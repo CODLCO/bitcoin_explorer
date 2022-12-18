@@ -36,8 +36,8 @@ defmodule BitcoinExplorerWeb.InputHelpers do
 
     content_tag :li do
       [
-        apply(Form, type, [form, field, opts]),
-        link("remove", to: "#", data: data, title: "remove", class: "")
+        apply(Form, type, [form, field, opts])
+        #     link("remove", to: "#", data: data, title: "remove", class: "")
       ]
     end
   end

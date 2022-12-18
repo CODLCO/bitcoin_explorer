@@ -23,9 +23,8 @@ defmodule BitcoinExplorerWeb.SendLive.Form do
   def render(assigns) do
     ~H"""
     <div class="w-full">
-      <button phx-click="add" phx-target={@myself}>Add an address</button>
+      <!-- <button phx-click="add" phx-target={@myself}>Add an address</button> -->
       <.form :let={f} as={:address_list} for={@changeset} phx-change="validate" phx-target={@myself}>
-        <%= label(f, :addresses) %>
         <%= address_list(f, :addresses) %>
         <%= error_tag(f, :addresses) %>
       </.form>

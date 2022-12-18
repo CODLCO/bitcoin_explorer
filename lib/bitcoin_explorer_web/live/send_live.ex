@@ -11,7 +11,7 @@ defmodule BitcoinExplorerWeb.SendLive do
   import BitcoinExplorerWeb.Components.UtxoList
 
   @default_fee 340
-  @default_addresses {false, [""]}
+  @default_addresses ["mgJ6YsnKxbDvR2aiwFreu2hEgyR7bxcwrr"]
   @destination_address "myKgsxuFQQvYkVjqUfXJSzoqYcywsCA4VS"
 
   @impl true
@@ -23,7 +23,7 @@ defmodule BitcoinExplorerWeb.SendLive do
       socket
       |> assign(:hero, "Send coins")
       |> assign(:fee, @default_fee)
-      |> assign(:addresses, @default_address)
+      |> assign(:addresses, @default_addresses)
       |> refresh_utxos()
       |> create_changeset()
     }
@@ -90,6 +90,23 @@ defmodule BitcoinExplorerWeb.SendLive do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_event("utxo_selected", data, socket) do
+    utxo =
+      data
+      |> Map.get("utxo")
+      |> Encoder.decode()
+
+    {
+      :noreply,
+      socket
+      |> toggle_utxo_selection(utxo.transaction_id, utxo.vxid)
+      |> calculate_balance()
+      |> calculate_selected()
+      |> calculate_amount()
+    }
+  end
+
   # @impl true
   # def handle_event("send", %{"send_bitcoin" => send_bitcoin}, socket) do
   #   socket =
@@ -122,10 +139,7 @@ defmodule BitcoinExplorerWeb.SendLive do
     }
   end
 
-  defp validate_addresses(%{assigns: %{addresses: {true, addresses}}}), do: {:ok, addresses}
-
-  defp validate_addresses(%{assigns: %{addresses: {false, _}}}),
-    do: {:error, "address is missing"}
+  defp validate_addresses(%{assigns: %{addresses: addresses}}), do: {:ok, addresses}
 
   defp validate_utxos(%{assigns: %{changeset: changeset, utxos: utxos}}) do
     case changeset.valid?() do
@@ -134,7 +148,7 @@ defmodule BitcoinExplorerWeb.SendLive do
     end
   end
 
-  defp send_bitcoin(%{assigns: %{addresses: {_, addresses}}} = socket, amount) do
+  defp send_bitcoin(%{assigns: %{addresses: addresses}} = socket, amount) do
     utxos = socket |> get_selected_utxos
 
     case utxos do

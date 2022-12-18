@@ -1,10 +1,29 @@
+<div class="block p-6 mb-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 lg:mb-0">
+  <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+    From
+  </div>
+  <p class="font-normal text-gray-700 dark:text-gray-400">
+    <div class="mb-4">
+      Select coins
+    </div>
+    <.utxo_list utxos={@utxos}></.utxo_list>
+  </p>
+</div>
+
+<div class="block p-6 mb-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 lg:mb-0">
+  <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+    To
+  </div>
+  <p class="font-normal text-gray-700 dark:text-gray-400">
+    <div class="mb-4">
+      <.live_component module={Form} id="form" content={@amount} />
+    </div>
+  </p>
+</div>
+
 <div class="">Balance: <%= Formatter.integer(@balance) %> sats</div>
 <div class="">Selected: <%= Formatter.integer(@selected) %> sats</div>
 <div class="">Amount: <%= Formatter.integer(@amount) %> sats</div>
 <div class="">Fee: <%= @fee %> sats</div>
 
-<.live_component module={Form} id="form" content={@amount} />
-
 <button phx-click="send">send</button>
-
-<.utxo_list utxos={@utxos}></.utxo_list>
