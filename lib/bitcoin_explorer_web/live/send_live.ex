@@ -3,7 +3,6 @@ defmodule BitcoinExplorerWeb.SendLive do
 
   require Logger
 
-  alias BitcoinExplorerWeb.SendLive.Form
   alias BitcoinExplorer.Wallet.Send
   alias BitcoinExplorer.{Encoder, Environment, Formatter, Utxo}
   alias BitcoinExplorer.Changesets
