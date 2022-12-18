@@ -107,6 +107,15 @@ defmodule BitcoinExplorerWeb.SendLive do
     }
   end
 
+  @impl true
+  def handle_event("remove_recipient", %{"address" => address}, socket) do
+    {
+      :noreply,
+      socket
+      |> remove_address(address)
+    }
+  end
+
   # @impl true
   # def handle_event("send", %{"send_bitcoin" => send_bitcoin}, socket) do
   #   socket =
@@ -200,6 +209,18 @@ defmodule BitcoinExplorerWeb.SendLive do
     socket
     |> assign(:utxos, utxos)
   end
+
+  defp remove_address(socket, address) do
+    addresses =
+      socket
+      |> get_addresses()
+      |> Enum.filter(&(&1 != address))
+
+    socket
+    |> assign(:addresses, addresses)
+  end
+
+  defp get_addresses(%{assigns: %{addresses: addresses}}), do: addresses
 
   defp calculate_balance(%{assigns: %{utxos: utxos}} = socket) do
     balance =
