@@ -8,7 +8,18 @@
     <div class="">Amount: <%= Formatter.integer(@amount) %> sats</div>
     <div class="">Fee: <%= @fee %> sats</div>
 
-    <button phx-click="send">send</button>
+    <button
+      type="button"
+      class="mt-4 px-5 py-2.5 mr-2 mb-2
+       focus:outline-none text-black 
+      bg-green-400 hover:bg-green-400 
+      focus:ring-green-500 focus:ring-4
+       font-medium text-sm 
+       rounded-lg"
+      phx-click="send"
+    >
+      Send
+    </button>
   </div>
 </div>
 
