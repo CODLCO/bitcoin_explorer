@@ -24,7 +24,7 @@ defmodule BitcoinExplorerWeb.InputHelpers do
     end
   end
 
-  def address_input(form, field, input_opts \\ [], data \\ []) do
+  def address_input(form, field, input_opts \\ [], _data \\ []) do
     type = input_type(form, field)
     name = input_name(form, field) <> "[]"
 
