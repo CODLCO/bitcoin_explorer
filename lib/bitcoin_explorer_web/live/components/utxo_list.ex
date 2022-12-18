@@ -31,12 +31,12 @@ defmodule BitcoinExplorerWeb.Components.UtxoList do
           </tr>
         </thead>
         <tbody>
-          <%= for utxo <- @utxos do %>
+          <%= for {utxo, index} <- Enum.with_index(@utxos) do %>
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
               <td class="p-4 w-4">
                 <div class="flex items-center">
                   <input
-                    id="checkbox-table-search-1"
+                    id={"checkbox-table-search-#{index}"}
                     type="checkbox"
                     phx-click="utxo_selected"
                     phx-value-utxo={Encoder.encode(utxo)}
