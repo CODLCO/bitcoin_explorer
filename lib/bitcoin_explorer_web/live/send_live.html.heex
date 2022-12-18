@@ -1,4 +1,18 @@
-<div class="block p-6 mb-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 lg:mb-0">
+<div class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 lg:mb-0">
+  <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+    Summary
+  </div>
+  <div>
+    <div class="">Balance: <%= Formatter.integer(@balance) %> sats</div>
+    <div class="">Selected: <%= Formatter.integer(@selected) %> sats</div>
+    <div class="">Amount: <%= Formatter.integer(@amount) %> sats</div>
+    <div class="">Fee: <%= @fee %> sats</div>
+
+    <button phx-click="send">send</button>
+  </div>
+</div>
+
+<div class="block p-6 mt-4 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 lg:mb-0">
   <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
     From
   </div>
@@ -10,7 +24,7 @@
   </p>
 </div>
 
-<div class="block p-6 mb-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 lg:mb-0">
+<div class="block p-6 mt-4 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 lg:mb-0">
   <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
     To
   </div>
@@ -20,10 +34,3 @@
     </div>
   </p>
 </div>
-
-<div class="">Balance: <%= Formatter.integer(@balance) %> sats</div>
-<div class="">Selected: <%= Formatter.integer(@selected) %> sats</div>
-<div class="">Amount: <%= Formatter.integer(@amount) %> sats</div>
-<div class="">Fee: <%= @fee %> sats</div>
-
-<button phx-click="send">send</button>
