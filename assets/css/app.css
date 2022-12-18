@@ -150,3 +150,10 @@
     opacity: 0;
   }
 }
+
+tbody:before {
+  content: "@";
+  display: block;
+  line-height: 6px;
+  text-indent: -99999px;
+}

@@ -11,7 +11,7 @@ defmodule BitcoinExplorerWeb.Components.UtxoList do
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
-            <th scope="col" class="p-4">
+            <th scope="col" class="pl-1">
               <div class="flex items-center">
                 <input
                   id="checkbox-all-search"
@@ -21,19 +21,19 @@ defmodule BitcoinExplorerWeb.Components.UtxoList do
                 <label for="checkbox-all-search" class="sr-only">checkbox</label>
               </div>
             </th>
-            <th scope="col" class="py-3 px-6 text-right">
+            <th scope="col" class="py-2 px-6 text-right">
               Sats
             </th>
-            <th scope="col" class="py-3 px-6"></th>
-            <th scope="col" class="py-3 px-6">
+            <th scope="col" class="py-2 px-6"></th>
+            <th scope="col" class="py-2 px-6">
               Output
             </th>
           </tr>
         </thead>
         <tbody>
           <%= for {utxo, index} <- Enum.with_index(@utxos) do %>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td class="p-4 w-4">
+            <tr>
+              <td class="px-1">
                 <div class="flex items-center">
                   <input
                     id={"checkbox-table-search-#{index}"}
